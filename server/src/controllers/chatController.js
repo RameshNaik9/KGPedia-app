@@ -15,8 +15,8 @@ async function loadFilter() {
     }
 }
 
-const publicVapidKey = process.env.PUBLIC_VAPID_KEY;
-const privateVapidKey = process.env.PRIVATE_VAPID_KEY;
+const publicVapidKey = process.env.PUBLIC_VAPID_KEY || 'BOtIvufQ6Sr9sav8KfNadOMUIQs2m7j--j4LNyYHKoGzCMyn3hC5wzdymAHQdh3HKKv1zdmYYEvFgPe9FmwH_KY';
+const privateVapidKey = process.env.PRIVATE_VAPID_KEY || 'O1pC8ZOHBv56JKdqzNErthl0GZe9BeWgm70zZnhaVms';
 // Set VAPID keys
 webpush.setVapidDetails(
     'mailto:your-email@example.com',
@@ -35,18 +35,27 @@ const sendPushNotification = async (messageData) => {
         url: `/chat`,
     };
 
-    subscribers.forEach(async (subscription) => {
+    // Use for...of to properly handle async/await
+    for (const subscription of subscribers) {
         try {
             await webpush.sendNotification(subscription, JSON.stringify(notificationPayload));
         } catch (error) {
+            // Handle expired subscriptions
             if (error.statusCode === 410) {
-                console.log(`Subscription has expired or is no longer valid: ${subscription.endpoint}`);
+                console.log(`Subscription expired: ${subscription.endpoint}`);
                 await Subscription.deleteOne({ endpoint: subscription.endpoint });
-            } else {
-                console.error('Error sending notification:', error);
+            }
+            // Handle VAPID key mismatch (401, 403, 400) - old subscriptions
+            else if (error.statusCode === 401 || error.statusCode === 403 || error.statusCode === 400) {
+                console.log(`Invalid subscription (VAPID mismatch), removing: ${subscription.endpoint}`);
+                await Subscription.deleteOne({ endpoint: subscription.endpoint });
+            }
+            // Log other errors but don't stop execution
+            else {
+                console.error('Error sending notification:', error.message);
             }
         }
-    });
+    }
 };
 
 const handleNewMessage = async (socket, io) => {
