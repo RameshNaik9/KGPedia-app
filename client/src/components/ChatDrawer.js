@@ -40,7 +40,7 @@ const ChatDrawer = ({ toggleDrawer, newConversation }) => {
     const [longPress, setLongPress] = useState(false); // New state for long press
     let pressTimer;
 
-    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia.azurewebsites.net';
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
 
 
     useEffect(() => {

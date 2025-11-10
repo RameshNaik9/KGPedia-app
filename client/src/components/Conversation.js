@@ -32,7 +32,7 @@ const Conversation = () => {
     const fullName = localStorage.getItem('fullName') || 'there';
     const [copiedMessageId, setCopiedMessageId] = useState(null);  // Track copied message
      const [isArchived, setIsArchived] = useState(false); // State to track if conversation is archived
-    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia.azurewebsites.net';
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
 
 
     // Function to handle copy

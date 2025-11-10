@@ -9,7 +9,7 @@ import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 
-const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia.azurewebsites.net';
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
 
 // Hardcoded departments list
 const departments = [

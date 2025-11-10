@@ -8,8 +8,8 @@ import moment from 'moment';
 import { getDateLabel } from './DateUtility'; // Ensure correct path
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-const socket = io(process.env.REACT_APP_SOCKET_URL || 'https://kgpedia.azurewebsites.net');
-const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia.azurewebsites.net';
+const socket = io(process.env.REACT_APP_SOCKET_URL || 'https://kgpedia-app.azurewebsites.net');
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
 const vapid_public_key = process.env.REACT_APP_VAPID_PUBLIC_KEY || 'BOMBbfvkjUBtjs49boCTJnI11Wec0CG7bp-vyVcvAclcvDfgRg2XMdwrINtOlO-S4SX5UxTiMNwAifpAEJ25wts';
 
 const ChatroomComponent = ({ onProfileClick }) => {  // Pass function to parent

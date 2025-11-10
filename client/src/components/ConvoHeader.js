@@ -22,7 +22,7 @@ const ConvoHeader = ({ toggleDrawer, isDrawerOpen, conversationId }) => {
     const rollNumber = localStorage.getItem('rollNumber');
     const department = localStorage.getItem('department');
     const isVerified = localStorage.getItem('isVerified') === 'true';
-    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia.azurewebsites.net';
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
 
     const handleLogout = () => {
         localStorage.clear();
