@@ -2,7 +2,7 @@ const Conversation = require('../models/conversation');
 const Message = require('../models/message');
 const axios = require('axios');
 
-    const fastApiBaseUrl = process.env.REACT_APP_FASTAPI_BASE_URL || 'https://kgpedia-ai-app.azurewebsites.net';
+    const fastApiBaseUrl = process.env.REACT_APP_FASTAPI_BASE_URL || 'https://kgpedia-ai.azurewebsites.net';
 
 // Create a new conversation in the database
 const createConversationInDB = async (userId, chatProfile) => {
