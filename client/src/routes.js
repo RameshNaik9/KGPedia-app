@@ -8,6 +8,14 @@ import HomePage from './pages/HomePage';
 import CareerAssistantPage from './pages/CareerAssistantPage'; 
 import PrivateRoute from './PrivateRoute';
 
+// V2 imports
+import { V2App, CareerAssistantPageV2 } from './v2';
+
+// V2 Page Wrapper - wraps v2 pages with theme provider
+const V2PageWrapper = ({ children }) => (
+    <V2App>{children}</V2App>
+);
+
 function RoutesConfig() {
     return (
         <Router>
@@ -17,18 +25,32 @@ function RoutesConfig() {
                 {/* <Route path="/login" element={<Login />} /> */}
                 {/* <Route path="/signup" element={<Signup />} /> */}
 
-                {/* Protected Routes */}
+                {/* Protected Routes - V1 (Original) */}
                 <Route element={<PrivateRoute />}>
                     {/* <Route path="/" element={<HomePage />} /> */}
                     <Route path="/home" element={<HomePage />} />
                     <Route path="/group-chat" element={<GroupChatPage />} />
                     
-                    {/* Routes for Career Assistant */}
+                    {/* Routes for Career Assistant - V1 */}
                     <Route path="/career-assistant" element={<CareerAssistantPage />} />
                     <Route path="/career-assistant/:conversation_id" element={<CareerAssistantPage />} />
                     <Route path="/career-assistant/archived/:conversation_id" element={<CareerAssistantPage />} />
 
-                    {/* Add similar protected routes for other assistants if needed */}
+                    {/* ============================================== */}
+                    {/* V2 Routes - New Design                        */}
+                    {/* ============================================== */}
+                    
+                    {/* Career Assistant V2 */}
+                    <Route 
+                        path="/v2/career-assistant" 
+                        element={<V2PageWrapper><CareerAssistantPageV2 /></V2PageWrapper>} 
+                    />
+                    <Route 
+                        path="/v2/career-assistant/:conversation_id" 
+                        element={<V2PageWrapper><CareerAssistantPageV2 /></V2PageWrapper>} 
+                    />
+
+                    {/* Add more V2 routes as needed */}
                 </Route>
             </Routes>
         </Router>

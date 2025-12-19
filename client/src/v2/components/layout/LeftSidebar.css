@@ -1,0 +1,297 @@
+/* ==========================================================================
+   LeftSidebar Styles - Fixed position icons, smooth expand animation
+   ========================================================================== */
+
+.left-sidebar {
+  width: var(--sidebar-width);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-primary);
+  padding: var(--space-2);
+  flex-shrink: 0;
+  transition: 
+    width var(--transition-web3),
+    background-color var(--transition-slow);
+  overflow: hidden;
+  z-index: var(--z-fixed);
+}
+
+/* Expanded State - just width changes, no padding change */
+.left-sidebar.is-expanded {
+  width: var(--sidebar-width-expanded);
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--space-1);
+}
+
+/* Navigation Sections */
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nav-main {
+  flex: 1;
+  padding-top: var(--space-1);
+}
+
+.nav-bottom {
+  padding-bottom: var(--space-1);
+}
+
+/* Separator */
+.nav-separator {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: var(--space-2) var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Nav Item Base - Icons stay in fixed position
+   ========================================================================== */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  /* Always align left - icons stay in same spot */
+  justify-content: flex-start;
+  gap: var(--space-3);
+  height: 48px;
+  /* Fixed padding - same in both states */
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: 
+    color var(--transition-base),
+    background-color var(--transition-base);
+  animation: fadeSlideIn 0.3s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==========================================================================
+   Icon Container - Fixed size and position
+   ========================================================================== */
+
+.nav-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Fixed width - icon never moves */
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  transition: transform var(--transition-base), color var(--transition-base);
+}
+
+/* Logo Image */
+.nav-item__logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Label - Fades in/out, never moves icon
+   ========================================================================== */
+
+.nav-item__label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  /* Hidden by default via width and opacity */
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  transition: 
+    opacity var(--transition-web3),
+    max-width var(--transition-web3);
+  pointer-events: none;
+}
+
+/* Show label when expanded - text fades in */
+.left-sidebar.is-expanded .nav-item__label {
+  opacity: 1;
+  max-width: 180px;
+  pointer-events: auto;
+}
+
+/* ==========================================================================
+   Active Indicator
+   ========================================================================== */
+
+.nav-item__indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background-color: var(--accent);
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  transition: 
+    height var(--transition-base),
+    opacity var(--transition-base);
+}
+
+/* ==========================================================================
+   States - Symmetric padding in all states
+   ========================================================================== */
+
+/* Hover State */
+.nav-item:hover {
+  color: var(--text-primary);
+  background-color: var(--surface-hover);
+}
+
+.nav-item:hover .nav-item__icon {
+  transform: scale(1.05);
+}
+
+/* Active State - Same padding as normal */
+.nav-item--active {
+  color: var(--text-primary);
+  background-color: var(--accent-bg);
+}
+
+.nav-item--active .nav-item__icon {
+  color: var(--accent);
+}
+
+/* Pressed State */
+.nav-item:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   Nav Item Variants
+   ========================================================================== */
+
+/* Brand/Logo - Slightly larger icon */
+.nav-item--brand {
+  margin-bottom: var(--space-2);
+  height: 52px;
+}
+
+.nav-item--brand .nav-item__icon {
+  width: 32px;
+  height: 32px;
+}
+
+.nav-item--brand .nav-item__logo-img {
+  width: 32px;
+  height: 32px;
+}
+
+.nav-item--brand .nav-item__label {
+  font-family: var(--font-family-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav-item--brand:hover {
+  background-color: transparent;
+}
+
+.nav-item--brand:hover .nav-item__icon {
+  transform: scale(1.08);
+}
+
+/* Assistant Items */
+.nav-item--assistant.nav-item--active {
+  background-color: var(--accent-bg);
+}
+
+.nav-item--assistant.nav-item--active .nav-item__icon {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Tooltip (Collapsed State)
+   ========================================================================== */
+
+.left-sidebar:not(.is-expanded) .nav-item[title]::after {
+  content: attr(title);
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--neutral-900);
+  color: var(--neutral-0);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: 
+    opacity var(--transition-fast),
+    visibility var(--transition-fast),
+    transform var(--transition-fast);
+  z-index: var(--z-tooltip);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .left-sidebar:not(.is-expanded) .nav-item[title]::after {
+  background-color: var(--neutral-100);
+  color: var(--neutral-900);
+}
+
+/* Show tooltip on hover */
+.left-sidebar:not(.is-expanded) .nav-item[title]:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .left-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 0;
+    box-shadow: var(--shadow-elevated);
+    width: var(--sidebar-width-expanded);
+  }
+
+  .left-sidebar .nav-item__label {
+    opacity: 1;
+    max-width: 180px;
+  }
+}

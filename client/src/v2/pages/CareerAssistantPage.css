@@ -1,0 +1,94 @@
+/* ==========================================================================
+   Career Assistant Page v2 Styles
+   ========================================================================== */
+
+/* Page-specific overrides if needed */
+
+/* Error State */
+.page-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--error);
+}
+
+.page-error-icon {
+  font-size: 48px;
+  margin-bottom: var(--space-4);
+}
+
+.page-error-message {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+}
+
+/* Welcome State */
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-12);
+  animation: fadeIn 0.5s ease;
+}
+
+.welcome-icon {
+  font-size: 64px;
+  margin-bottom: var(--space-4);
+}
+
+.welcome-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.welcome-subtitle {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  max-width: 400px;
+  line-height: var(--leading-relaxed);
+}
+
+/* Suggestions */
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+  max-width: 600px;
+  width: 100%;
+}
+
+.suggestion-card {
+  padding: var(--space-4);
+  background-color: var(--surface-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.suggestion-card:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+}
+
+.suggestion-icon {
+  font-size: 24px;
+  margin-bottom: var(--space-2);
+}
+
+.suggestion-text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+}
+

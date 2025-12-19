@@ -1,0 +1,275 @@
+/* ==========================================================================
+   MainLayout Styles - Clean approach with NO gap, using margins
+   ========================================================================== */
+
+.main-layout {
+  display: flex;
+  position: relative;
+  min-height: 100vh;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--bg-primary);
+  overflow: hidden;
+  padding: var(--layout-padding);
+  /* NO gap - using margins for spacing */
+  gap: 0;
+  transition: background-color var(--transition-slow);
+}
+
+/* ==========================================================================
+   Main Content - Fills ALL remaining space
+   ========================================================================== */
+
+.main-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.main-content__inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--surface-primary);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  border-radius: var(--radius-2xl);
+  transition: 
+    background-color var(--transition-slow),
+    box-shadow var(--transition-slow);
+}
+
+/* ==========================================================================
+   Left Sidebar - Uses margin-right for spacing
+   ========================================================================== */
+
+.main-layout .left-sidebar {
+  border-radius: var(--radius-2xl);
+  border: none;
+  box-shadow: var(--shadow-card);
+  background-color: var(--surface-primary);
+  flex-shrink: 0;
+  width: var(--sidebar-width);
+  height: 100%;
+  margin-right: var(--layout-padding);
+  overflow: hidden;
+  transition: 
+    width var(--transition-web3),
+    margin var(--transition-web3),
+    opacity var(--transition-web3),
+    transform var(--transition-web3),
+    background-color var(--transition-slow);
+}
+
+.left-expanded .left-sidebar {
+  width: var(--sidebar-width-expanded);
+}
+
+/* ==========================================================================
+   Right Panel - Uses margin-left for spacing
+   ========================================================================== */
+
+.main-layout .right-panel {
+  width: var(--right-panel-width);
+  height: 100%;
+  border-radius: var(--radius-2xl);
+  background-color: var(--surface-primary);
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+  margin-left: var(--layout-padding);
+  overflow: hidden;
+  transition: 
+    width var(--transition-web3),
+    margin var(--transition-web3),
+    opacity var(--transition-web3),
+    transform var(--transition-web3),
+    background-color var(--transition-slow);
+}
+
+/* ==========================================================================
+   Left Hidden - Completely removed, no space taken
+   ========================================================================== */
+
+.left-hidden .left-sidebar {
+  width: 0;
+  margin-right: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Right Hidden - Completely removed, no space taken
+   ========================================================================== */
+
+.right-hidden .right-panel {
+  width: 0;
+  margin-left: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Right Hidden - Remove right padding so content extends to edge
+   ========================================================================== */
+
+.right-hidden {
+  padding-right: 0;
+}
+
+/* ==========================================================================
+   Left Hidden - Remove left padding so content extends to edge
+   ========================================================================== */
+
+.left-hidden {
+  padding-left: 0;
+}
+
+/* ==========================================================================
+   Focus Mode - Both hidden, no left/right padding
+   ========================================================================== */
+
+.is-focus-mode {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.is-focus-mode .left-sidebar {
+  width: 0;
+  margin-right: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.is-focus-mode .right-panel {
+  width: 0;
+  margin-left: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .main-layout {
+    --layout-padding: 10px;
+  }
+
+  .main-layout .right-panel {
+    width: 260px;
+  }
+  
+  .right-hidden .right-panel {
+    width: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-layout .right-panel {
+    position: fixed;
+    right: var(--layout-padding);
+    top: var(--layout-padding);
+    bottom: var(--layout-padding);
+    height: auto;
+    z-index: var(--z-fixed);
+    width: var(--right-panel-width);
+    margin-left: 0;
+  }
+
+  .right-hidden .right-panel {
+    transform: translateX(calc(100% + var(--layout-padding)));
+    width: var(--right-panel-width);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    --layout-padding: 8px;
+  }
+
+  .main-layout .left-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    z-index: var(--z-fixed);
+    border-radius: 0;
+    width: var(--sidebar-width-expanded);
+    margin-right: 0;
+  }
+
+  .left-hidden .left-sidebar {
+    transform: translateX(-100%);
+    width: var(--sidebar-width-expanded);
+    opacity: 0;
+  }
+
+  .main-layout .right-panel {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 0;
+  }
+
+  .right-hidden .right-panel {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 576px) {
+  .main-layout {
+    --layout-padding: 6px;
+  }
+  
+  .main-layout .right-panel {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+/* ==========================================================================
+   Overlay for mobile/tablet
+   ========================================================================== */
+
+.main-layout::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-overlay);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: 
+    opacity var(--transition-web3),
+    visibility var(--transition-web3);
+  z-index: calc(var(--z-fixed) - 1);
+}
+
+@media (max-width: 1024px) {
+  .main-layout:not(.right-hidden)::before {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-layout:not(.left-hidden)::before,
+  .main-layout:not(.right-hidden)::before {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
