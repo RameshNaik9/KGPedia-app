@@ -1,206 +1,271 @@
 /**
- * CareerAssistantPage v2 - Career Guide Assistant
+ * CareerAssistantPage v2 - Conversation page for Career Assistant
+ * 
+ * Features:
+ * 1. SSE Streaming for real-time AI responses
+ * 2. Markdown rendering with proper formatting
+ * 3. Optimistic UI updates
+ * 4. Feedback integration (like/dislike)
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { MainLayout } from '../components/layout';
 import { ChatContainer } from '../components/chat';
+import { conversationApi, streamResponse } from '../services/assistantApi';
+import { useConversations } from '../context/ConversationsContext';
 import './CareerAssistantPage.css';
-
-const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
 
 const CareerAssistantPage = () => {
   const { conversation_id } = useParams();
   const navigate = useNavigate();
+  const { updateConversation, setActiveConversationId } = useConversations();
   
   const [messages, setMessages] = useState([]);
-  const [conversations, setConversations] = useState([]);
+  const [chatTitle, setChatTitle] = useState(null);
+  const [conversationDate, setConversationDate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingMessageId, setStreamingMessageId] = useState(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  
+  const chatContainerRef = useRef(null);
+  const eventSourceRef = useRef(null);
 
-  // Load conversations
-  useEffect(() => {
-    const loadConversations = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-        
-        if (!token || !userId) return;
-
-        const response = await axios.get(
-          `${apiBaseUrl}/api/assistant/conversations/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-        setConversations(response.data.map(conv => ({
-          id: conv._id,
-          title: conv.title || 'New Conversation',
-          timestamp: new Date(conv.updatedAt)
-        })));
-      } catch (err) {
-        console.error('Failed to load conversations:', err);
-      }
-    };
-
-    loadConversations();
+  // Scroll to bottom helper
+  const scrollToBottom = useCallback(() => {
+    chatContainerRef.current?.scrollToBottom?.();
   }, []);
 
-  // Load messages
+  // Set active conversation
+  useEffect(() => {
+    if (conversation_id) {
+      setActiveConversationId(conversation_id);
+    }
+  }, [conversation_id, setActiveConversationId]);
+
+  // Set browser tab title (document.title)
+  useEffect(() => {
+    const baseTitle = 'KGPedia';
+    if (chatTitle && chatTitle !== 'New Chat') {
+      document.title = `${chatTitle} - ${baseTitle}`;
+    } else {
+      document.title = `Career Assistant - ${baseTitle}`;
+    }
+    
+    // Cleanup: reset title when leaving page
+    return () => {
+      document.title = baseTitle;
+    };
+  }, [chatTitle]);
+
+  // Cleanup SSE on unmount
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+    };
+  }, []);
+
+  // Load messages from API
   useEffect(() => {
     const loadMessages = async () => {
       if (!conversation_id) {
         setMessages([]);
+        setChatTitle(null);
+        setConversationDate(null);
+        setIsInitialLoading(false);
         return;
       }
 
       try {
-        setIsLoading(true);
-        const token = localStorage.getItem('token');
+        setIsInitialLoading(true);
+        const data = await conversationApi.getById(conversation_id);
         
-        const response = await axios.get(
-          `${apiBaseUrl}/api/assistant/conversation/${conversation_id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // Set chat metadata
+        setChatTitle(data.chat_title || null);
+        setConversationDate(data.createdAt || null);
         
-        const transformedMessages = response.data.messages?.map((msg, index) => ({
-          id: `${conversation_id}-${index}`,
-          role: msg.user_message ? 'user' : 'assistant',
-          content: msg.user_message?.content || msg.assistant_response?.content || '',
-          timestamp: new Date(msg.timestamp || Date.now())
-        })).filter(msg => msg.content) || [];
+        // Transform API messages to chat format
+        const transformedMessages = [];
+        data.messages?.forEach((msg, index) => {
+          if (msg.user_message?.content) {
+            transformedMessages.push({
+              id: `${conversation_id}-${index}-user`,
+              role: 'user',
+              content: msg.user_message.content,
+              timestamp: new Date(msg.user_message.timestamp || Date.now())
+            });
+          }
+          if (msg.assistant_response?.content) {
+            transformedMessages.push({
+              id: `${conversation_id}-${index}-assistant`,
+              messageId: msg.message_id, // Keep original message ID for feedback
+              role: 'assistant',
+              content: msg.assistant_response.content,
+              feedback: msg.feedback || 2.5,
+              timestamp: new Date(msg.assistant_response.timestamp || Date.now())
+            });
+          }
+        });
 
         setMessages(transformedMessages);
       } catch (err) {
-        console.error('Failed to load messages:', err);
+        console.error('[CareerAssistant] Failed to load messages:', err);
       } finally {
-        setIsLoading(false);
+        setIsInitialLoading(false);
       }
     };
 
     loadMessages();
   }, [conversation_id]);
 
-  const handleNewChat = useCallback(async () => {
-    navigate('/v2/career-assistant');
-    setMessages([]);
-  }, [navigate]);
+  // Scroll when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages.length, scrollToBottom]);
 
-  const handleConversationSelect = useCallback((convId) => {
-    navigate(`/v2/career-assistant/${convId}`);
-  }, [navigate]);
-
+  // Send message handler with SSE streaming
   const handleSendMessage = useCallback(async (content) => {
-    if (!content.trim()) return;
+    if (!content.trim() || !conversation_id) return;
 
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+    const trimmedContent = content.trim();
+    const userMessageId = `user-${Date.now()}`;
+    const assistantMessageId = `assistant-${Date.now()}`;
 
-    const userMessage = {
-      id: `temp-${Date.now()}`,
+    // 1. Add user message immediately (optimistic update)
+    const newUserMessage = {
+      id: userMessageId,
       role: 'user',
-      content: content.trim(),
+      content: trimmedContent,
       timestamp: new Date()
     };
     
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(currentMessages => [...currentMessages, newUserMessage]);
     setIsLoading(true);
 
     try {
-      let currentConversationId = conversation_id;
+      // 2. Send message to API (this saves it and triggers AI response)
+      const postPromise = conversationApi.sendMessage(conversation_id, trimmedContent);
 
-      if (!currentConversationId) {
-        const createResponse = await axios.post(
-          `${apiBaseUrl}/api/assistant/conversation`,
-          { 
-            user_id: userId,
-            user_message: { content: content.trim() }
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        
-        currentConversationId = createResponse.data.conversation_id;
-        navigate(`/v2/career-assistant/${currentConversationId}`, { replace: true });
-      } else {
-        await axios.post(
-          `${apiBaseUrl}/api/assistant/${currentConversationId}`,
-          { user_message: { content: content.trim() } },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
-
-      const eventSource = new EventSource(
-        `${apiBaseUrl}/api/assistant/stream-response/${currentConversationId}?token=${token}`
-      );
-
-      const assistantMessageId = `assistant-${Date.now()}`;
-      setMessages(prev => [...prev, {
+      // 3. Add empty assistant message placeholder for streaming
+      const newAssistantMessage = {
         id: assistantMessageId,
         role: 'assistant',
         content: '',
         timestamp: new Date()
-      }]);
+      };
+      setMessages(currentMessages => [...currentMessages, newAssistantMessage]);
+      setStreamingMessageId(assistantMessageId);
+      setIsStreaming(true);
+      setIsLoading(false);
 
-      eventSource.onmessage = (event) => {
-        if (event.data.trim()) {
-          setMessages(prev => prev.map(msg => 
-            msg.id === assistantMessageId
-              ? { ...msg, content: msg.content + event.data + '\n' }
-              : msg
-          ));
+      // 4. Start SSE streaming
+      eventSourceRef.current = streamResponse(
+        conversation_id,
+        // onChunk - append each chunk
+        (chunk) => {
+          setMessages(currentMessages => 
+            currentMessages.map(msg => 
+              msg.id === assistantMessageId
+                ? { ...msg, content: msg.content + chunk + '\n' }
+                : msg
+            )
+          );
+          scrollToBottom();
+        },
+        // onComplete - finalize with API response
+        async () => {
+          try {
+            const response = await postPromise;
+            
+            // Update the message with final content and message ID
+            setMessages(currentMessages => 
+              currentMessages.map(msg => 
+                msg.id === assistantMessageId
+                  ? { 
+                      ...msg, 
+                      content: response.assistant_response?.content || msg.content,
+                      messageId: response.message_id // Store real message ID for feedback
+                    }
+                  : msg
+              )
+            );
+
+            // Update conversation title if AI generated one
+            if (response.chat_title && response.chat_title !== 'New Chat') {
+              setChatTitle(response.chat_title);
+              updateConversation(conversation_id, {
+                chat_title: response.chat_title,
+                last_message_at: new Date().toISOString()
+              });
+            }
+          } catch (err) {
+            console.error('[SSE] Error getting final response:', err);
+          }
+          
+          setIsStreaming(false);
+          setStreamingMessageId(null);
+          scrollToBottom();
+        },
+        // onError
+        (error) => {
+          console.error('[SSE] Stream error:', error);
+          setIsStreaming(false);
+          setStreamingMessageId(null);
         }
-      };
-
-      eventSource.onerror = () => {
-        eventSource.close();
-        setIsLoading(false);
-      };
-
-      eventSource.addEventListener('end', () => {
-        eventSource.close();
-        setIsLoading(false);
-      });
+      );
 
     } catch (err) {
-      console.error('Failed to send message:', err);
+      console.error('[CareerAssistant] Failed to send message:', err);
       setIsLoading(false);
-      setMessages(prev => prev.filter(msg => msg.id !== userMessage.id));
+      setIsStreaming(false);
+      setStreamingMessageId(null);
+      // Remove the user message on error
+      setMessages(currentMessages => 
+        currentMessages.filter(msg => msg.id !== userMessageId && msg.id !== assistantMessageId)
+      );
     }
-  }, [conversation_id, navigate]);
+  }, [conversation_id, updateConversation, scrollToBottom]);
 
-  // Demo messages
-  const demoMessages = messages.length > 0 ? messages : [
-    {
-      id: 'demo-1',
-      role: 'user',
-      content: 'Create a minimalist bedroom, with all walls painted in a muted olive green color. A floor-to-ceiling window on the left side of the room offers a view of the forest.',
-      timestamp: new Date()
-    },
-    {
-      id: 'demo-2',
-      role: 'assistant',
-      content: 'Here is the minimalist bedroom design with muted olive green walls, a view of the forest through a floor-to-ceiling window, and the oak wood bed with grey linen sheets. Let me know your thoughts!',
-      image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&auto=format&fit=crop&q=60',
-      imageAlt: 'Minimalist bedroom with olive green walls',
-      timestamp: new Date()
-    }
-  ];
+  // Handle new chat
+  const handleNewChat = useCallback(() => {
+    navigate('/v2/career-assistant');
+  }, [navigate]);
+
+  // Handle refresh/regenerate (TODO: implement backend support)
+  const handleRefresh = useCallback((message) => {
+    console.log('Regenerate response for:', message);
+    // TODO: Implement regenerate functionality
+  }, []);
+
+  // Loading state
+  if (isInitialLoading) {
+    return (
+      <div className="conversation-loading">
+        <div className="loading-spinner" />
+        <p>Loading conversation...</p>
+      </div>
+    );
+  }
 
   return (
-    <MainLayout
-      conversations={conversations}
-      activeConversationId={conversation_id}
-      onConversationSelect={handleConversationSelect}
+    <ChatContainer
+      ref={chatContainerRef}
+      title="Career Assistant"
+      chatTitle={chatTitle}
+      conversationDate={conversationDate}
+      messages={messages}
+      isLoading={isLoading}
+      isStreaming={isStreaming}
+      streamingMessageId={streamingMessageId}
+      onSendMessage={handleSendMessage}
       onNewChat={handleNewChat}
-    >
-      <ChatContainer
-        title="KGPedia"
-        messages={demoMessages}
-        isLoading={isLoading}
-        onSendMessage={handleSendMessage}
-        placeholder="Ask me anything about careers..."
-      />
-    </MainLayout>
+      onRefresh={handleRefresh}
+      placeholder="Ask me anything about careers, placements, internships..."
+    />
   );
 };
 

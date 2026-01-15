@@ -5,7 +5,7 @@ const Message = require('../models/message'); // Ensure the correct path to the 
 const { getConversationMessages } = require('../services/assistantService');
 const { getAllConversationsForUserService } = require('../services/assistantService');
 const { updateMessageFeedbackService } = require('../services/assistantService');
-const { archiveConversationService } = require('../services/assistantService');
+const { archiveConversationService, renameConversationService, toggleStarConversationService } = require('../services/assistantService');
 
 
 
@@ -14,7 +14,8 @@ const { archiveConversationService } = require('../services/assistantService');
 // Create a new conversation
 const createNewConversation = async (req, res) => {
   try {
-    const userId = req.query.userId; // Extract userId from query parameters
+    // Get userId from authenticated user (set by auth middleware)
+    const userId = req.user.id;
     const { chat_profile } = req.body;
 
     // Input validation
@@ -22,9 +23,12 @@ const createNewConversation = async (req, res) => {
       return res.status(400).json({ message: 'Chat profile is required.' });
     }
 
-    // Validate chat profile
-    if (!['Career', 'Academics', 'General'].includes(chat_profile)) {
-      return res.status(400).json({ message: 'Invalid chat profile. Use "Career", "Academics", or "General".' });
+    // Validate chat profile - includes all assistant types
+    const validProfiles = ['Career', 'Academics', 'Gymkhana', 'Bhaat', 'General'];
+    if (!validProfiles.includes(chat_profile)) {
+      return res.status(400).json({ 
+        message: `Invalid chat profile. Use one of: ${validProfiles.join(', ')}.` 
+      });
     }
 
     // Call the service to create the conversation in the database
@@ -247,5 +251,62 @@ const archiveConversation = async (req, res) => {
 };
 
 
-module.exports = { createNewConversation, sendMessage, getConversation,getAllConversationsForUser, deleteConversation, submitFeedback, archiveConversation };
+// Controller to rename a conversation
+const renameConversation = async (req, res) => {
+    try {
+        const { conversation_id } = req.params;
+        const { title } = req.body;
+
+        if (!title || title.trim() === '') {
+            return res.status(400).json({ message: 'Title is required' });
+        }
+
+        const updatedConversation = await renameConversationService(conversation_id, title.trim());
+
+        if (!updatedConversation) {
+            return res.status(404).json({ message: 'Conversation not found' });
+        }
+
+        return res.status(200).json({ 
+            message: 'Conversation renamed successfully',
+            conversation: updatedConversation
+        });
+    } catch (error) {
+        console.error('Error renaming conversation:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+// Controller to toggle star status
+const toggleStarConversation = async (req, res) => {
+    try {
+        const { conversation_id } = req.params;
+
+        const updatedConversation = await toggleStarConversationService(conversation_id);
+
+        if (!updatedConversation) {
+            return res.status(404).json({ message: 'Conversation not found' });
+        }
+
+        return res.status(200).json({ 
+            message: updatedConversation.is_starred ? 'Conversation starred' : 'Conversation unstarred',
+            is_starred: updatedConversation.is_starred
+        });
+    } catch (error) {
+        console.error('Error toggling star:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+module.exports = { 
+    createNewConversation, 
+    sendMessage, 
+    getConversation,
+    getAllConversationsForUser, 
+    deleteConversation, 
+    submitFeedback, 
+    archiveConversation,
+    renameConversation,
+    toggleStarConversation
+};
 

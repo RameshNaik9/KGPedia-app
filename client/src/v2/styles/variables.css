@@ -63,6 +63,8 @@
   --text-xl: 1.125rem;     /* 18px */
   --text-2xl: 1.25rem;     /* 20px */
   --text-3xl: 1.5rem;      /* 24px */
+  --text-4xl: 2rem;        /* 32px */
+  --text-5xl: 2.5rem;      /* 40px */
   
   /* Font Weights */
   --font-light: 300;
@@ -70,6 +72,7 @@
   --font-medium: 500;
   --font-semibold: 600;
   --font-bold: 700;
+  --font-extrabold: 800;
   
   /* Line Heights */
   --leading-tight: 1.25;
@@ -152,6 +155,7 @@
   --surface-secondary: var(--neutral-50);
   --surface-hover: var(--neutral-100);
   --surface-active: var(--neutral-150);
+  --surface-glass: rgba(255, 255, 255, 0.7);
   
   --text-primary: var(--neutral-900);
   --text-secondary: var(--neutral-600);
@@ -187,6 +191,7 @@
   --surface-secondary: var(--neutral-800);
   --surface-hover: var(--neutral-700);
   --surface-active: var(--neutral-600);
+  --surface-glass: rgba(23, 23, 23, 0.7);
   
   --text-primary: var(--neutral-50);
   --text-secondary: var(--neutral-300);

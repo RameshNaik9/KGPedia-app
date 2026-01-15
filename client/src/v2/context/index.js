@@ -4,3 +4,4 @@
 
 export { ThemeProvider, useTheme } from './ThemeContext';
 export { LayoutProvider, useLayout, LAYOUT_MODES } from './LayoutContext';
+export { ConversationsProvider, useConversations } from './ConversationsContext';

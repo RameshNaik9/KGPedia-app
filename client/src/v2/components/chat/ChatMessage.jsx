@@ -1,100 +1,149 @@
 /**
- * ChatMessage - Individual message bubble
- * Supports user messages, assistant messages with images
+ * ChatMessage - Individual message component
+ * User messages: Right-aligned bubble
+ * Assistant messages: Full-width with markdown, no box border
+ * Includes Web3-styled action buttons for assistant messages
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Icon from '../ui/Icon';
+import MarkdownRenderer from './MarkdownRenderer';
+import { conversationApi } from '../../services/assistantApi';
 import './ChatMessage.css';
 
 const ChatMessage = ({ 
   message,
   isUser = false,
+  isStreaming = false,
   showActions = true,
-  onCopy,
-  onLike,
-  onDislike
+  isLatestResponse = false, // New prop to always show actions for latest response
+  onRefresh
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isDisliked, setIsDisliked] = useState(false);
+  const [feedback, setFeedback] = useState(message.feedback || 2.5);
+  const [isCopied, setIsCopied] = useState(false);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
-  const handleCopy = () => {
+  // Handle copy to clipboard
+  const handleCopy = useCallback(() => {
     if (message.content) {
-      navigator.clipboard.writeText(message.content);
-      onCopy?.(message);
+      navigator.clipboard.writeText(message.content).then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      });
     }
-  };
+  }, [message.content]);
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setIsDisliked(false);
-    onLike?.(message, !isLiked);
-  };
+  // Handle feedback (like = 5, dislike = 1, neutral = 2.5)
+  const handleFeedback = useCallback(async (newRating) => {
+    // Don't submit feedback for temp messages or while submitting
+    if (message.id?.startsWith('temp-') || message.id?.startsWith('user-') || isSubmittingFeedback) {
+      return;
+    }
 
-  const handleDislike = () => {
-    setIsDisliked(!isDisliked);
-    setIsLiked(false);
-    onDislike?.(message, !isDisliked);
-  };
+    // Toggle: if same rating, reset to neutral
+    const finalRating = feedback === newRating ? 2.5 : newRating;
+    
+    setIsSubmittingFeedback(true);
+    setFeedback(finalRating);
 
+    try {
+      // Extract actual message ID (remove prefix if present)
+      const messageId = message.messageId || message.id;
+      await conversationApi.submitFeedback(messageId, finalRating);
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+      // Revert on error
+      setFeedback(feedback);
+    } finally {
+      setIsSubmittingFeedback(false);
+    }
+  }, [message.id, message.messageId, feedback, isSubmittingFeedback]);
+
+  // Render User Message
+  if (isUser) {
+    return (
+      <div className="chat-message chat-message--user">
+        <div className="user-message-bubble">
+          <span className="user-message-text">{message.content}</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Render Assistant Message
   return (
-    <div className={`chat-message ${isUser ? 'chat-message--user' : 'chat-message--assistant'}`}>
-      <div className="message-wrapper">
-        {/* Message Actions (for assistant messages) */}
-        {!isUser && showActions && (
-          <div className="message-actions">
+    <div className={`chat-message chat-message--assistant ${isLatestResponse ? 'is-latest' : ''}`}>
+      {/* Assistant Avatar */}
+      <div className={`assistant-avatar ${isStreaming ? 'is-streaming' : ''}`}>
+        <img 
+          src="/icons/img1-icon.png" 
+          alt="KGPedia Assistant" 
+          className="avatar-image"
+        />
+      </div>
+
+      {/* Message Content */}
+      <div className="assistant-message-content">
+        <MarkdownRenderer 
+          content={message.content} 
+          isStreaming={isStreaming} 
+        />
+
+        {/* Action Buttons - Only show when not streaming and has content */}
+        {showActions && !isStreaming && message.content && (
+          <div className="message-action-bar">
+            {/* Copy Button */}
             <button 
-              className="action-btn"
-              onClick={() => {}}
-              title="More options"
-              aria-label="More options"
-            >
-              <Icon name="dotsHorizontal" size={16} />
-            </button>
-            <button 
-              className="action-btn"
+              className={`action-pill ${isCopied ? 'is-copied' : ''}`}
               onClick={handleCopy}
-              title="Copy"
+              title={isCopied ? 'Copied!' : 'Copy'}
               aria-label="Copy message"
             >
-              <Icon name="copy" size={16} />
+              <Icon name={isCopied ? 'check' : 'copy'} size={14} />
+              <span className="action-label">{isCopied ? 'Copied' : 'Copy'}</span>
             </button>
+
+            {/* Like Button */}
             <button 
-              className={`action-btn ${isLiked ? 'active' : ''}`}
-              onClick={handleLike}
-              title="Like"
-              aria-label="Like message"
+              className={`action-pill ${feedback === 5 ? 'is-active is-liked' : ''}`}
+              onClick={() => handleFeedback(5)}
+              title="Helpful"
+              aria-label="Mark as helpful"
+              disabled={isSubmittingFeedback}
             >
-              <Icon name="thumbsUp" size={16} />
+              <Icon name={feedback === 5 ? 'thumbsUpFilled' : 'thumbsUp'} size={14} />
+              <span className="action-label">Helpful</span>
             </button>
+
+            {/* Dislike Button */}
             <button 
-              className={`action-btn ${isDisliked ? 'active' : ''}`}
-              onClick={handleDislike}
-              title="Dislike"
-              aria-label="Dislike message"
+              className={`action-pill ${feedback === 1 ? 'is-active is-disliked' : ''}`}
+              onClick={() => handleFeedback(1)}
+              title="Not helpful"
+              aria-label="Mark as not helpful"
+              disabled={isSubmittingFeedback}
             >
-              <Icon name="thumbsDown" size={16} />
+              <Icon name={feedback === 1 ? 'thumbsDownFilled' : 'thumbsDown'} size={14} />
+              <span className="action-label">Not helpful</span>
             </button>
+
+            {/* Refresh Button */}
+            {onRefresh && (
+              <button 
+                className="action-pill"
+                onClick={() => onRefresh(message)}
+                title="Regenerate"
+                aria-label="Regenerate response"
+              >
+                <Icon name="refresh" size={14} />
+                <span className="action-label">Retry</span>
+              </button>
+            )}
           </div>
         )}
-
-        {/* Message Content */}
-        <div className="message-bubble">
-          {message.content && (
-            <p className="message-text">{message.content}</p>
-          )}
-          
-          {/* Image Attachment */}
-          {message.image && (
-            <div className="message-image">
-              <img src={message.image} alt={message.imageAlt || 'Attached image'} />
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
 };
 
 export default ChatMessage;
-

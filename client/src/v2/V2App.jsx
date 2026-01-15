@@ -1,20 +1,23 @@
 /**
  * V2App - Main wrapper for v2 application
- * Provides theme and layout context with global styles
+ * Provides theme, layout, and conversations context with global styles
  */
 
 import React from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { LayoutProvider } from './context/LayoutContext';
+import { ConversationsProvider } from './context/ConversationsContext';
 import './styles/globals.css';
 
 const V2App = ({ children }) => {
   return (
     <ThemeProvider>
       <LayoutProvider>
-        <div className="v2-app">
-          {children}
-        </div>
+        <ConversationsProvider>
+          <div className="v2-app">
+            {children}
+          </div>
+        </ConversationsProvider>
       </LayoutProvider>
     </ThemeProvider>
   );

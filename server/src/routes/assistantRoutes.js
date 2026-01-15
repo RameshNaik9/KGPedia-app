@@ -1,5 +1,15 @@
 const express = require('express');
-const { createNewConversation, sendMessage, getConversation, getAllConversationsForUser, deleteConversation, submitFeedback, archiveConversation } = require('../controllers/assistantController');
+const { 
+    createNewConversation, 
+    sendMessage, 
+    getConversation, 
+    getAllConversationsForUser, 
+    deleteConversation, 
+    submitFeedback, 
+    archiveConversation,
+    renameConversation,
+    toggleStarConversation
+} = require('../controllers/assistantController');
 const { streamAssistantResponse } = require('../controllers/assistantSSEController'); // Import SSE controller
 const authMiddleware = require('../middleware/auth');
 
@@ -28,5 +38,11 @@ router.delete('/conversation/:conversation_id', authMiddleware, deleteConversati
 
 // Add route for archiving a conversation
 router.patch('/conversation/:conversation_id', authMiddleware, archiveConversation);
+
+// Route to rename a conversation
+router.patch('/conversation/:conversation_id/rename', authMiddleware, renameConversation);
+
+// Route to toggle star status
+router.patch('/conversation/:conversation_id/star', authMiddleware, toggleStarConversation);
 
 module.exports = router;

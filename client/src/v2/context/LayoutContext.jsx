@@ -24,6 +24,12 @@ export const LAYOUT_MODES = {
   FOCUS: 'focus',                 // Both hidden
 };
 
+// Right panel width constraints
+const RIGHT_PANEL_MIN_WIDTH = 240;
+const RIGHT_PANEL_MAX_WIDTH = 450;
+const RIGHT_PANEL_DEFAULT_WIDTH = 280;
+const RIGHT_PANEL_STORAGE_KEY = 'kgpedia-right-panel-width';
+
 export const LayoutProvider = ({ children }) => {
   // Sidebar states
   const [isLeftSidebarExpanded, setIsLeftSidebarExpanded] = useState(false);
@@ -32,6 +38,13 @@ export const LayoutProvider = ({ children }) => {
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [isImmersiveMode, setIsImmersiveMode] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Right panel resizable width - load from localStorage
+  const [rightPanelWidth, setRightPanelWidth] = useState(() => {
+    const saved = localStorage.getItem(RIGHT_PANEL_STORAGE_KEY);
+    return saved ? parseInt(saved, 10) : RIGHT_PANEL_DEFAULT_WIDTH;
+  });
+  const [isResizingRightPanel, setIsResizingRightPanel] = useState(false);
 
   // Listen for native fullscreen changes
   useEffect(() => {
@@ -46,6 +59,42 @@ export const LayoutProvider = ({ children }) => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
     };
+  }, []);
+
+  // Save right panel width to localStorage
+  useEffect(() => {
+    if (!isResizingRightPanel) {
+      localStorage.setItem(RIGHT_PANEL_STORAGE_KEY, rightPanelWidth.toString());
+    }
+  }, [rightPanelWidth, isResizingRightPanel]);
+
+  // Right panel resize handlers
+  const startResizingRightPanel = useCallback(() => {
+    setIsResizingRightPanel(true);
+  }, []);
+
+  const stopResizingRightPanel = useCallback(() => {
+    setIsResizingRightPanel(false);
+  }, []);
+
+  const resizeRightPanel = useCallback((clientX) => {
+    if (!isResizingRightPanel) return;
+    
+    // Calculate new width from right edge
+    const newWidth = window.innerWidth - clientX;
+    
+    // Clamp to min/max
+    const clampedWidth = Math.min(
+      Math.max(newWidth, RIGHT_PANEL_MIN_WIDTH),
+      Math.min(RIGHT_PANEL_MAX_WIDTH, window.innerWidth * 0.4) // Also cap at 40% of viewport
+    );
+    
+    setRightPanelWidth(clampedWidth);
+  }, [isResizingRightPanel]);
+
+  // Reset right panel to default width
+  const resetRightPanelWidth = useCallback(() => {
+    setRightPanelWidth(RIGHT_PANEL_DEFAULT_WIDTH);
   }, []);
 
   // Start animation
@@ -186,6 +235,12 @@ export const LayoutProvider = ({ children }) => {
     isAnimating,
     layoutMode,
     
+    // Right panel resize states
+    rightPanelWidth,
+    isResizingRightPanel,
+    rightPanelMinWidth: RIGHT_PANEL_MIN_WIDTH,
+    rightPanelMaxWidth: RIGHT_PANEL_MAX_WIDTH,
+    
     // Actions
     toggleLeftSidebar,
     toggleFocusMode,
@@ -194,6 +249,12 @@ export const LayoutProvider = ({ children }) => {
     setIsLeftSidebarExpanded,
     setIsLeftSidebarVisible,
     setIsRightPanelVisible,
+    
+    // Right panel resize actions
+    startResizingRightPanel,
+    stopResizingRightPanel,
+    resizeRightPanel,
+    resetRightPanelWidth,
   };
 
   return (

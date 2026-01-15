@@ -30,10 +30,21 @@ const ConversationSchema = new Schema({
     enum: ['active', 'closed', 'archived'],
     default: 'active'
   },
+  is_starred: {
+    type: Boolean,
+    default: false
+  },
+  // Collection this conversation belongs to (null = uncategorized)
+  // Note: Named 'collectionId' to avoid Mongoose reserved 'collection' keyword
+  collectionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Collection',
+    default: null
+  },
   tags: [String],
   chat_profile: {
     type: String,
-    enum: ['Career', 'Academics', 'Gymkhana', 'Bhaat'],
+    enum: ['Career', 'Academics', 'Gymkhana', 'Bhaat', 'General'],
     default: 'Career'
   },
   chat_title: {
