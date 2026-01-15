@@ -1,0 +1,216 @@
+/* ==========================================================================
+   KGPedia v2 Design System - CSS Variables
+   ========================================================================== */
+
+:root {
+  /* ========== Primary Colors (Blue) ========== */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  --primary-900: #1e3a8a;
+  
+  /* Main accent - Blue (changed from lime/green) */
+  --accent: #3b82f6;
+  --accent-light: #60a5fa;
+  --accent-dark: #2563eb;
+  --accent-bg: rgba(59, 130, 246, 0.12);
+  --accent-glow: rgba(59, 130, 246, 0.4);
+  
+  /* Secondary accent for variety */
+  --secondary: #8b5cf6;
+  --secondary-light: #a78bfa;
+  --secondary-bg: rgba(139, 92, 246, 0.12);
+  
+  /* ========== Neutral Colors ========== */
+  --neutral-0: #ffffff;
+  --neutral-25: #fafafa;
+  --neutral-50: #f5f5f5;
+  --neutral-100: #efefef;
+  --neutral-150: #e8e8e8;
+  --neutral-200: #e0e0e0;
+  --neutral-300: #c7c7c7;
+  --neutral-400: #a3a3a3;
+  --neutral-500: #737373;
+  --neutral-600: #525252;
+  --neutral-700: #404040;
+  --neutral-800: #262626;
+  --neutral-900: #171717;
+  --neutral-950: #0a0a0a;
+  
+  /* ========== Semantic Colors ========== */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+  
+  /* ========== Typography ========== */
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-display: 'Outfit', 'Poppins', 'Inter', sans-serif;
+  --font-family-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  
+  /* Font Sizes */
+  --text-xs: 0.6875rem;    /* 11px */
+  --text-sm: 0.75rem;      /* 12px */
+  --text-base: 0.875rem;   /* 14px */
+  --text-md: 0.9375rem;    /* 15px */
+  --text-lg: 1rem;         /* 16px */
+  --text-xl: 1.125rem;     /* 18px */
+  --text-2xl: 1.25rem;     /* 20px */
+  --text-3xl: 1.5rem;      /* 24px */
+  --text-4xl: 2rem;        /* 32px */
+  --text-5xl: 2.5rem;      /* 40px */
+  
+  /* Font Weights */
+  --font-light: 300;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  
+  /* ========== Spacing Scale ========== */
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  
+  /* ========== Border Radius ========== */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;    /* 4px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.25rem;   /* 20px */
+  --radius-3xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+  
+  /* ========== Shadows ========== */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.1);
+  --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+  
+  /* ========== Transitions - Web3 Style ========== */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-smooth: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-web3: 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  
+  /* ========== Z-Index Scale ========== */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+  
+  /* ========== Layout ========== */
+  --sidebar-width: 72px;
+  --sidebar-width-expanded: 240px;
+  --right-panel-width: 280px;
+  --header-height: 56px;
+  --input-height: 48px;
+  --layout-padding: 12px;
+}
+
+/* ==========================================================================
+   Light Theme (Default)
+   ========================================================================== */
+[data-theme="light"], :root {
+  --bg-primary: var(--neutral-100);
+  --bg-secondary: var(--neutral-0);
+  --bg-tertiary: var(--neutral-100);
+  --bg-elevated: var(--neutral-0);
+  --bg-overlay: rgba(0, 0, 0, 0.4);
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  
+  --surface-primary: var(--neutral-0);
+  --surface-secondary: var(--neutral-50);
+  --surface-hover: var(--neutral-100);
+  --surface-active: var(--neutral-150);
+  --surface-glass: rgba(255, 255, 255, 0.7);
+  
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary: var(--neutral-500);
+  --text-muted: var(--neutral-400);
+  --text-inverse: var(--neutral-0);
+  
+  --border-default: var(--neutral-200);
+  --border-light: var(--neutral-150);
+  --border-subtle: var(--neutral-100);
+  
+  --input-bg: var(--neutral-0);
+  --input-border: var(--neutral-200);
+  --input-focus: var(--accent);
+  
+  --message-user-bg: var(--neutral-100);
+  --message-assistant-bg: var(--neutral-0);
+  --message-shadow: var(--shadow-sm);
+}
+
+/* ==========================================================================
+   Dark Theme
+   ========================================================================== */
+[data-theme="dark"] {
+  --bg-primary: var(--neutral-950);
+  --bg-secondary: var(--neutral-900);
+  --bg-tertiary: var(--neutral-800);
+  --bg-elevated: var(--neutral-800);
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --bg-glass: rgba(23, 23, 23, 0.85);
+  
+  --surface-primary: var(--neutral-900);
+  --surface-secondary: var(--neutral-800);
+  --surface-hover: var(--neutral-700);
+  --surface-active: var(--neutral-600);
+  --surface-glass: rgba(23, 23, 23, 0.7);
+  
+  --text-primary: var(--neutral-50);
+  --text-secondary: var(--neutral-300);
+  --text-tertiary: var(--neutral-400);
+  --text-muted: var(--neutral-500);
+  --text-inverse: var(--neutral-900);
+  
+  --border-default: var(--neutral-700);
+  --border-light: var(--neutral-800);
+  --border-subtle: var(--neutral-800);
+  
+  --input-bg: var(--neutral-800);
+  --input-border: var(--neutral-700);
+  --input-focus: var(--accent);
+  
+  --message-user-bg: var(--neutral-800);
+  --message-assistant-bg: var(--neutral-900);
+  --message-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.4);
+}

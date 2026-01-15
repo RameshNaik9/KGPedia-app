@@ -1,0 +1,116 @@
+/**
+ * DropdownMenu - Portal-based dropdown styles
+ */
+
+.dropdown-menu-portal,
+.dropdown-submenu-portal {
+  min-width: 140px;
+  max-width: 200px;
+  padding: var(--space-1);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Menu Items */
+.dropdown-menu-portal button,
+.dropdown-submenu-portal button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.dropdown-menu-portal button:hover,
+.dropdown-submenu-portal button:hover {
+  background: var(--surface-hover);
+}
+
+.dropdown-menu-portal button.active,
+.dropdown-submenu-portal button.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* Delete action */
+.dropdown-menu-portal button.menu-delete,
+.dropdown-submenu-portal button.menu-delete {
+  color: var(--error);
+}
+
+.dropdown-menu-portal button.menu-delete:hover,
+.dropdown-submenu-portal button.menu-delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Submenu trigger - has arrow */
+.dropdown-menu-portal .submenu-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-menu-portal .submenu-trigger .submenu-arrow {
+  margin-left: auto;
+  opacity: 0.5;
+}
+
+/* Submenu items */
+.dropdown-submenu-portal .submenu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.dropdown-submenu-portal .submenu-item .check-icon {
+  margin-left: auto;
+  color: var(--accent);
+}
+
+.dropdown-submenu-portal .submenu-empty {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+/* Divider */
+.dropdown-menu-portal .menu-divider,
+.dropdown-submenu-portal .menu-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: var(--space-1) 0;
+}
+
+/* New item highlight */
+.dropdown-submenu-portal .submenu-item-new {
+  color: var(--accent);
+}
+
+.dropdown-submenu-portal .submenu-item-new:hover {
+  background: var(--accent-bg);
+}
+

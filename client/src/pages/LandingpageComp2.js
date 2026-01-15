@@ -8,7 +8,7 @@ import '../components/LandingpageComp2.css';
 // import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://www.kgpedia.com';
 
 const LandingpageComp2 = () => {
   const [activeForm, setActiveForm] = useState(null);

@@ -40,7 +40,7 @@ const ChatDrawer = ({ toggleDrawer, newConversation }) => {
     const [longPress, setLongPress] = useState(false); // New state for long press
     let pressTimer;
 
-    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://www.kgpedia.com';
 
 
     useEffect(() => {
@@ -225,7 +225,7 @@ const ChatDrawer = ({ toggleDrawer, newConversation }) => {
             <List>
                 {/* Home Header */}
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/home')}>
+                    <ListItemButton onClick={() => navigate('/home/v1')}>
                         <ListItemText
                             sx={{ color: 'white', marginRight: 1, marginLeft: 2 }}
                             primary="Home"

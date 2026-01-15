@@ -2,8 +2,29 @@ const Conversation = require('../models/conversation');
 const Message = require('../models/message');
 const axios = require('axios');
 
-    const fastApiBaseUrl = process.env.REACT_APP_FASTAPI_BASE_URL || 'https://kgpedia-ai.azurewebsites.net';
+const fastApiBaseUrl = process.env.REACT_APP_FASTAPI_BASE_URL || 'https://www.kgpedia.com';
 
+// Flag to use test mode (mock response without calling FastAPI)
+// When true: returns hardcoded mock response (no API call, no LLM)
+// When false: calls real FastAPI endpoint (production mode)
+const useTestMode = process.env.USE_TEST_MODE === 'true'; // Default: false (production)
+
+// Hardcoded mock response - same format as FastAPI returns
+const MOCK_API_RESPONSE = {
+  assistant_response: `Based on your question, here's what I can tell you about IIT Kharagpur:
+
+The Training & Placement Cell at IIT KGP facilitates excellent career opportunities. Top companies like Google, Microsoft, Amazon, and Goldman Sachs regularly recruit from campus. The average package is around ₹20 LPA with the highest going up to ₹2.5 Cr for international roles.
+
+For preparation, focus on Data Structures & Algorithms, system design, and your core domain knowledge. Would you like more specific guidance?`,
+  chat_title: "Career Discussion",
+  tags_list: ["Placements", "Career", "IIT KGP"],
+  questions_list: [
+    "What companies recruit from IIT KGP?",
+    "How to prepare for technical interviews?",
+    "Tell me about research opportunities"
+  ],
+  response_time: "0.5s"
+};
 // Create a new conversation in the database
 const createConversationInDB = async (userId, chatProfile) => {
   try {
@@ -63,14 +84,26 @@ const saveUserMessageService = async (conversationId, userId, userMessageContent
 // Get the assistant's response, update the message, and save tags/recommended questions in the conversation
 const getAssistantResponseService = async (conversationId, messageId, userMessage, chatProfile) => {
   try {
-    // Send request to FastAPI microservice
-    const response = await axios.post(`${fastApiBaseUrl}/chat/conversation_id`, {
-      conversation_id: conversationId,
-      user_message: userMessage,
-      chat_profile: chatProfile,
-    });
+    let assistant_response, response_time, chat_title, tags_list, questions_list;
 
-    const { assistant_response, response_time, chat_title, tags_list, questions_list } = response.data;
+    if (useTestMode) {
+      // TEST MODE: Return hardcoded mock response without calling FastAPI
+      console.log(`[AssistantService] 🧪 TEST MODE - Returning mock response (no API call)`);
+      
+      ({ assistant_response, response_time, chat_title, tags_list, questions_list } = MOCK_API_RESPONSE);
+    } else {
+      // PRODUCTION MODE: Call real FastAPI endpoint
+      const endpoint = `${fastApiBaseUrl}/chat/conversation_id`;
+      console.log(`[AssistantService] Calling AI endpoint: ${endpoint}`);
+      
+      const response = await axios.post(endpoint, {
+        conversation_id: conversationId,
+        user_message: userMessage,
+        chat_profile: chatProfile,
+      });
+
+      ({ assistant_response, response_time, chat_title, tags_list, questions_list } = response.data);
+    }
 
     // Update the existing message document with the assistant's response
     const updatedMessage = await Message.findOneAndUpdate(
@@ -193,5 +226,50 @@ const archiveConversationService = async (conversationId) => {
 };
 
 
-module.exports = { createConversationInDB, saveUserMessageService, getAssistantResponseService, getConversationMessages, getAllConversationsForUserService, updateMessageFeedbackService, archiveConversationService };
+// Service to rename a conversation
+const renameConversationService = async (conversationId, newTitle) => {
+    try {
+        const updatedConversation = await Conversation.findByIdAndUpdate(
+            conversationId,
+            { chat_title: newTitle },
+            { new: true }
+        );
+        return updatedConversation;
+    } catch (error) {
+        console.error('Error renaming conversation:', error);
+        throw new Error('Database operation failed');
+    }
+};
+
+// Service to toggle star status
+const toggleStarConversationService = async (conversationId) => {
+    try {
+        const conversation = await Conversation.findById(conversationId);
+        if (!conversation) {
+            throw new Error('Conversation not found');
+        }
+        
+        const updatedConversation = await Conversation.findByIdAndUpdate(
+            conversationId,
+            { is_starred: !conversation.is_starred },
+            { new: true }
+        );
+        return updatedConversation;
+    } catch (error) {
+        console.error('Error toggling star:', error);
+        throw new Error('Database operation failed');
+    }
+};
+
+module.exports = { 
+    createConversationInDB, 
+    saveUserMessageService, 
+    getAssistantResponseService, 
+    getConversationMessages, 
+    getAllConversationsForUserService, 
+    updateMessageFeedbackService, 
+    archiveConversationService,
+    renameConversationService,
+    toggleStarConversationService
+};
 

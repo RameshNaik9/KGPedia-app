@@ -9,7 +9,7 @@ import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 
-const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://www.kgpedia.com';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -46,7 +46,7 @@ function Login() {
                 localStorage.setItem('department', response.data.user.department);
                 localStorage.setItem('isVerified', response.data.user.isVerified);
                 toast.success('Login successful!');
-                navigate('/home');
+                navigate('/home/v2');
             } else {
                 toast.error('Invalid email or password. Please try again.');
             }

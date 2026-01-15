@@ -1,0 +1,139 @@
+/* ==========================================================================
+   RightPanel Styles - Resizable sidebar for AI Models & Conversations
+   ========================================================================== */
+
+.right-panel {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--surface-primary);
+  flex-shrink: 0;
+  overflow: hidden;
+  transform-origin: right center;
+  transition: 
+    opacity var(--transition-web3),
+    transform var(--transition-web3),
+    background-color var(--transition-slow);
+}
+
+/* Disable width transition while resizing for smooth dragging */
+.right-panel:not(.is-resizing) {
+  transition: 
+    width var(--transition-web3),
+    opacity var(--transition-web3),
+    transform var(--transition-web3),
+    background-color var(--transition-slow);
+}
+
+/* ==========================================================================
+   Resize Handle
+   ========================================================================== */
+
+.right-panel__resize-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.right-panel__resize-handle:hover,
+.right-panel.is-resizing .right-panel__resize-handle {
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.2) 0%,
+    transparent 100%
+  );
+}
+
+.resize-handle__line {
+  width: 2px;
+  height: 40px;
+  background: var(--border-subtle);
+  border-radius: 1px;
+  opacity: 0;
+  transition: all var(--transition-fast);
+}
+
+.right-panel__resize-handle:hover .resize-handle__line,
+.right-panel.is-resizing .resize-handle__line {
+  opacity: 1;
+  background: var(--accent);
+  height: 60px;
+}
+
+/* ==========================================================================
+   Content Wrapper
+   ========================================================================== */
+
+.right-panel__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-left: 6px; /* Space for resize handle */
+}
+
+/* Scrollable container for all components */
+.right-panel__scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for right panel */
+.right-panel__scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.right-panel__scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.right-panel__scroll::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 2px;
+}
+
+.right-panel__scroll:hover::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .right-panel {
+    position: fixed;
+    right: var(--layout-padding);
+    top: var(--layout-padding);
+    bottom: var(--layout-padding);
+    border-radius: var(--radius-2xl);
+    z-index: var(--z-fixed);
+    box-shadow: var(--shadow-2xl);
+  }
+}
+
+@media (max-width: 768px) {
+  .right-panel {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .right-panel {
+    width: 100%;
+    max-width: 320px;
+  }
+}

@@ -1,0 +1,290 @@
+/* ==========================================================================
+   ChatMessage Styles
+   User messages: Right-aligned bubbles
+   Assistant messages: Full-width, no box, with avatar
+   ========================================================================== */
+
+.chat-message {
+  display: flex;
+  padding: var(--space-3) 0;
+  animation: messageSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   User Message Styles
+   ========================================================================== */
+
+.chat-message--user {
+  justify-content: flex-end;
+  padding-right: var(--space-2);
+}
+
+.user-message-bubble {
+  max-width: 70%;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--surface-tertiary);
+  color: var(--text-primary);
+  border-radius: var(--radius-2xl) var(--radius-2xl) var(--radius-sm) var(--radius-2xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.user-message-text {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Dark theme user bubble */
+[data-theme="dark"] .user-message-bubble {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   Assistant Message Styles
+   ========================================================================== */
+
+.chat-message--assistant {
+  justify-content: flex-start;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+/* Assistant Avatar */
+.assistant-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--surface-secondary), var(--surface-tertiary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.assistant-avatar.is-streaming {
+  animation: avatarPulse 1.5s ease-in-out infinite;
+  box-shadow: 
+    0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.4),
+    var(--shadow-sm);
+}
+
+@keyframes avatarPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 0 rgba(var(--primary-rgb, 99, 102, 241), 0.4),
+      var(--shadow-sm);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 8px rgba(var(--primary-rgb, 99, 102, 241), 0),
+      var(--shadow-md);
+  }
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Assistant Message Content - Full Width, No Box */
+.assistant-message-content {
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100% - 52px); /* Account for avatar + gap */
+}
+
+/* ==========================================================================
+   Action Bar - Web3 Styled Pills
+   ========================================================================== */
+
+.message-action-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 0.25s ease;
+}
+
+.chat-message--assistant:hover .message-action-bar {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Always show actions for the latest response */
+.chat-message--assistant.is-latest .message-action-bar {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Always show on mobile */
+@media (max-width: 768px) {
+  .message-action-bar {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Action Pill Button */
+.action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.action-pill:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-pill:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.action-pill:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Action Label - Hide on small screens */
+.action-label {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .action-label {
+    display: inline;
+  }
+}
+
+/* Copied State */
+.action-pill.is-copied {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+/* Liked State */
+.action-pill.is-liked {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+/* Disliked State */
+.action-pill.is-disliked {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+/* ==========================================================================
+   Dark Theme Overrides
+   ========================================================================== */
+
+[data-theme="dark"] .assistant-avatar {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .action-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .action-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .message-action-bar {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .action-pill.is-liked {
+  background: rgba(52, 211, 153, 0.15);
+  border-color: rgba(52, 211, 153, 0.3);
+  color: #34d399;
+}
+
+[data-theme="dark"] .action-pill.is-disliked {
+  background: rgba(248, 113, 113, 0.15);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #f87171;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .chat-message--assistant {
+    gap: var(--space-2);
+  }
+
+  .assistant-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .assistant-message-content {
+    max-width: calc(100% - 44px);
+  }
+
+  .user-message-bubble {
+    max-width: 85%;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .action-pill {
+    padding: var(--space-1);
+  }
+}
+
+@media (max-width: 480px) {
+  .assistant-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .message-action-bar {
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+}

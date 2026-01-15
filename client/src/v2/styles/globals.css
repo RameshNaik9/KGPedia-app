@@ -1,0 +1,206 @@
+/* ==========================================================================
+   KGPedia v2 - Scoped Styles (Only affects .v2-app)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import './variables.css';
+
+/* ========== V2 App Container - All styles scoped here ========== */
+.v2-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-family-base);
+  font-size: var(--text-base);
+  font-weight: var(--font-regular);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.3s ease;
+}
+
+/* ========== Scoped Reset ========== */
+.v2-app *,
+.v2-app *::before,
+.v2-app *::after {
+  box-sizing: border-box;
+}
+
+/* ========== Scoped Focus States ========== */
+.v2-app :focus {
+  outline: none;
+}
+
+.v2-app :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ========== Scoped Selection ========== */
+.v2-app ::selection {
+  background-color: var(--accent);
+  color: var(--neutral-0);
+}
+
+/* ========== Scoped Scrollbar ========== */
+.v2-app ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.v2-app ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.v2-app ::-webkit-scrollbar-thumb {
+  background: var(--neutral-300);
+  border-radius: var(--radius-full);
+}
+
+.v2-app ::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-400);
+}
+
+[data-theme="dark"] .v2-app ::-webkit-scrollbar-thumb {
+  background: var(--neutral-600);
+}
+
+[data-theme="dark"] .v2-app ::-webkit-scrollbar-thumb:hover {
+  background: var(--neutral-500);
+}
+
+/* ========== Scoped Typography ========== */
+.v2-app h1, 
+.v2-app h2, 
+.v2-app h3, 
+.v2-app h4, 
+.v2-app h5, 
+.v2-app h6 {
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.v2-app a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.v2-app button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.v2-app input, 
+.v2-app textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.v2-app img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ========== Scoped Utility Classes ========== */
+.v2-app .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.v2-app .truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========== Animation Keyframes ========== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* ==========================================================================
+   Theme Transition: Blur Effect
+   ========================================================================== */
+
+.v2-app.theme-blur-transition {
+  animation: themeBlur 400ms ease;
+}
+
+@keyframes themeBlur {
+  0% {
+    filter: blur(0px);
+    transform: scale(1);
+  }
+  50% {
+    filter: blur(8px);
+    transform: scale(1.02);
+  }
+  100% {
+    filter: blur(0px);
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+   Smooth element transitions during theme change
+   ========================================================================== */
+
+.v2-app,
+.v2-app * {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+}
+
+/* Override for layout elements that need their own transitions */
+.v2-app .left-sidebar,
+.v2-app .right-panel,
+.v2-app .main-content__inner,
+.v2-app .nav-item,
+.v2-app .layout-control-btn {
+  transition: all var(--transition-web3);
+}

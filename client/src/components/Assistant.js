@@ -11,7 +11,7 @@ const Assistant = ({ onNewConversation }) => {
     const [userMessage, setUserMessage] = useState(''); 
     const [assistantMessage, setAssistantMessage] = useState(''); 
     const navigate = useNavigate();
-    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://kgpedia-app.azurewebsites.net';
+    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://www.kgpedia.com';
 
 
     const handleSendMessage = async (message) => {

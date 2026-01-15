@@ -1,0 +1,164 @@
+/* ==========================================================================
+   CareerAssistantWelcome - Loading State Styles
+   ========================================================================== */
+
+.welcome-loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--surface-primary);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+}
+
+.welcome-loading__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-8);
+  gap: var(--space-4);
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-loading__message {
+  width: 100%;
+  display: flex;
+  animation: slideUp 0.4s ease;
+}
+
+.welcome-loading__message:nth-child(2) {
+  animation-delay: 0.15s;
+  animation-fill-mode: backwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* User message - right aligned */
+.welcome-loading__message:first-child {
+  justify-content: flex-end;
+}
+
+/* Assistant message - left aligned */
+.welcome-loading__message:last-child {
+  justify-content: flex-start;
+}
+
+.welcome-loading__bubble {
+  max-width: 80%;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-2xl);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* User bubble */
+.welcome-loading__bubble--user {
+  background-color: var(--message-user-bg);
+  color: var(--text-primary);
+  border-radius: var(--radius-2xl) var(--radius-2xl) var(--radius-sm) var(--radius-2xl);
+}
+
+/* Assistant bubble */
+.welcome-loading__bubble--assistant {
+  background-color: var(--surface-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: var(--radius-2xl) var(--radius-2xl) var(--radius-2xl) var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Typing indicator */
+.welcome-loading__bubble--assistant .typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.welcome-loading__bubble--assistant .typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-500);
+  border-radius: 50%;
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.welcome-loading__bubble--assistant .typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.welcome-loading__bubble--assistant .typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+}
+
+.typing-text {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .welcome-loading__bubble--assistant .typing-indicator span {
+  background-color: var(--accent);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .welcome-loading__content {
+    padding: var(--space-4);
+  }
+  
+  .welcome-loading__bubble {
+    max-width: 90%;
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
