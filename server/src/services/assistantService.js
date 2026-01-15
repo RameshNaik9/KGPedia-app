@@ -2,7 +2,7 @@ const Conversation = require('../models/conversation');
 const Message = require('../models/message');
 const axios = require('axios');
 
-const fastApiBaseUrl = process.env.REACT_APP_FASTAPI_BASE_URL || 'https://kgpedia-ai.azurewebsites.net';
+const fastApiBaseUrl = process.env.REACT_APP_FASTAPI_BASE_URL || 'https://www.kgpedia.com';
 
 // Flag to use test mode (mock response without calling FastAPI)
 // When true: returns hardcoded mock response (no API call, no LLM)
