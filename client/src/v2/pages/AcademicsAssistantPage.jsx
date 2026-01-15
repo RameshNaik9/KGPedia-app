@@ -209,7 +209,7 @@ const AcademicsAssistantPage = () => {
   }, [conversation_id, updateConversation, scrollToBottom]);
 
   const handleNewChat = useCallback(() => {
-    navigate('/v2/academics-assistant');
+    navigate('/home/v2/academics-assistant');
   }, [navigate]);
 
   const handleRefresh = useCallback((message) => {

@@ -46,7 +46,7 @@ function Login() {
                 localStorage.setItem('department', response.data.user.department);
                 localStorage.setItem('isVerified', response.data.user.isVerified);
                 toast.success('Login successful!');
-                navigate('/home');
+                navigate('/home/v2');
             } else {
                 toast.error('Invalid email or password. Please try again.');
             }

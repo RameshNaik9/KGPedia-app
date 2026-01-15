@@ -65,7 +65,7 @@ const CareerAssistantWelcome = () => {
       }
       
       // 5. Navigate to conversation page
-      navigate(`/v2/career-assistant/${conversationId}`, { replace: true });
+      navigate(`/home/v2/career-assistant/${conversationId}`, { replace: true });
       
     } catch (error) {
       console.error('[CareerWelcome] Failed:', error);

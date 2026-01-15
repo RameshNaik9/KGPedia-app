@@ -163,7 +163,7 @@ const ConversationsHub = ({ filterByAssistant = null }) => {
   // Handle conversation click
   const handleConversationClick = (conversation) => {
     const profilePath = conversation.chat_profile.toLowerCase();
-    const basePath = `/v2/${profilePath}-assistant`;
+    const basePath = `/home/v2/${profilePath}-assistant`;
     const path = `${basePath}/${conversation._id}`;
     
     setActiveConversationId(conversation._id);
@@ -371,7 +371,7 @@ const ConversationsHub = ({ filterByAssistant = null }) => {
               className="hub-add-btn"
               onClick={(e) => { 
                 e.stopPropagation(); 
-                navigate(`/v2/${filterByAssistant.toLowerCase()}-assistant`);
+                navigate(`/home/v2/${filterByAssistant.toLowerCase()}-assistant`);
               }}
               title="New conversation"
             >

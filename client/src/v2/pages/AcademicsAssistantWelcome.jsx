@@ -52,7 +52,7 @@ const AcademicsAssistantWelcome = () => {
         });
       }
       
-      navigate(`/v2/academics-assistant/${conversationId}`, { replace: true });
+      navigate(`/home/v2/academics-assistant/${conversationId}`, { replace: true });
       
     } catch (error) {
       console.error('Failed to create conversation:', error);

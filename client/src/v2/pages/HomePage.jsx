@@ -18,7 +18,7 @@ const HomePage = () => {
       icon: '💼',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       glow: 'rgba(102, 126, 234, 0.4)',
-      path: '/v2/career-assistant'
+      path: '/home/v2/career-assistant'
     },
     {
       id: 'academics',
@@ -27,7 +27,7 @@ const HomePage = () => {
       icon: '📚',
       gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
       glow: 'rgba(56, 239, 125, 0.4)',
-      path: '/v2/academics-assistant'
+      path: '/home/v2/academics-assistant'
     },
     {
       id: 'gymkhana',
@@ -36,7 +36,7 @@ const HomePage = () => {
       icon: '🏆',
       gradient: 'linear-gradient(135deg, #fc466b 0%, #3f5efb 100%)',
       glow: 'rgba(252, 70, 107, 0.4)',
-      path: '/v2/gymkhana-assistant'
+      path: '/home/v2/gymkhana-assistant'
     },
     {
       id: 'bhaat',
@@ -45,7 +45,7 @@ const HomePage = () => {
       icon: '💬',
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
       glow: 'rgba(240, 147, 251, 0.4)',
-      path: '/v2/bhaat-assistant'
+      path: '/home/v2/bhaat-assistant'
     }
   ];
 
@@ -146,11 +146,11 @@ const HomePage = () => {
 
           {/* Quick Actions */}
           <div className="home-quick">
-            <button className="quick-btn" onClick={() => navigate('/v2/group-chat')}>
+            <button className="quick-btn" onClick={() => navigate('/home/v2/group-chat')}>
               <span className="quick-btn__icon">👥</span>
               <span>Group Chat</span>
             </button>
-            <button className="quick-btn" onClick={() => navigate('/v2/private-chat')}>
+            <button className="quick-btn" onClick={() => navigate('/home/v2/private-chat')}>
               <span className="quick-btn__icon">🔒</span>
               <span>Private Messages</span>
             </button>

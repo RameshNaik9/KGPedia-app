@@ -225,7 +225,7 @@ const ChatDrawer = ({ toggleDrawer, newConversation }) => {
             <List>
                 {/* Home Header */}
                 <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate('/home')}>
+                    <ListItemButton onClick={() => navigate('/home/v1')}>
                         <ListItemText
                             sx={{ color: 'white', marginRight: 1, marginLeft: 2 }}
                             primary="Home"

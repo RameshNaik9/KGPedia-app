@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import GroupChatPage from './pages/GroupChatPage';
 import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
@@ -29,7 +29,8 @@ function RoutesConfig() {
 
                 {/* Protected Routes - V1 (Original) */}
                 <Route element={<PrivateRoute />}>
-                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/home" element={<Navigate to="/home/v1" replace />} />
+                    <Route path="/home/v1" element={<HomePage />} />
                     <Route path="/group-chat" element={<GroupChatPage />} />
                     
                     {/* Routes for Career Assistant - V1 */}
@@ -42,7 +43,7 @@ function RoutesConfig() {
                     {/* ============================================== */}
                     
                     {/* V2 Parent Route - Wraps all V2 pages with persistent layout */}
-                    <Route path="/v2" element={<V2LayoutWrapper />}>
+                    <Route path="/home/v2" element={<V2LayoutWrapper />}>
                         {/* Home */}
                         <Route index element={<HomePageV2 />} />
                         
@@ -62,6 +63,8 @@ function RoutesConfig() {
                         <Route path="bhaat-assistant" element={<BhaatAssistantWelcomeV2 />} />
                         <Route path="bhaat-assistant/:conversation_id" element={<BhaatAssistantPageV2 />} />
                     </Route>
+                    {/* Legacy V2 path (redirect to /home/v2) */}
+                    <Route path="/v2/*" element={<Navigate to="/home/v2" replace />} />
                 </Route>
             </Routes>
         </Router>

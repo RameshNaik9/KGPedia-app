@@ -232,7 +232,7 @@ const CareerAssistantPage = () => {
 
   // Handle new chat
   const handleNewChat = useCallback(() => {
-    navigate('/v2/career-assistant');
+    navigate('/home/v2/career-assistant');
   }, [navigate]);
 
   // Handle refresh/regenerate (TODO: implement backend support)

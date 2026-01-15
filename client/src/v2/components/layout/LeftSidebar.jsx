@@ -32,49 +32,49 @@ const LeftSidebar = () => {
       icon: null,
       logo: KGPEDIA_LOGO,
       label: 'KGPedia', 
-      path: '/v2', 
+      path: '/home/v2', 
       type: 'brand' 
     },
     { 
       id: 'group-chat', 
       icon: 'groupChat', 
       label: 'Group Chat', 
-      path: '/v2/group-chat',
+      path: '/home/v2/group-chat',
       type: 'nav'
     },
     { 
       id: 'career-assistant', 
       icon: 'briefcase', 
       label: 'Career Guide', 
-      path: '/v2/career-assistant',
+      path: '/home/v2/career-assistant',
       type: 'assistant'
     },
     { 
       id: 'academics-assistant', 
       icon: 'graduationCap', 
       label: 'Academics Help', 
-      path: '/v2/academics-assistant',
+      path: '/home/v2/academics-assistant',
       type: 'assistant'
     },
     { 
       id: 'gymkhana-assistant', 
       icon: 'trophy', 
       label: 'Gymkhana Hub', 
-      path: '/v2/gymkhana-assistant',
+      path: '/home/v2/gymkhana-assistant',
       type: 'assistant'
     },
     { 
       id: 'bhaat-assistant', 
       icon: 'utensils', 
       label: 'Bhaat Corner', 
-      path: '/v2/bhaat-assistant',
+      path: '/home/v2/bhaat-assistant',
       type: 'assistant'
     },
     { 
       id: 'private-chat', 
       icon: 'lock', 
       label: 'Private Messages', 
-      path: '/v2/private-chat',
+      path: '/home/v2/private-chat',
       type: 'nav'
     },
   ];
@@ -92,14 +92,14 @@ const LeftSidebar = () => {
       id: 'settings', 
       icon: 'settings', 
       label: 'Settings', 
-      path: '/v2/settings',
+      path: '/home/v2/settings',
       type: 'nav'
     },
     { 
       id: 'profile', 
       icon: 'user', 
       label: 'Profile', 
-      path: '/v2/profile',
+      path: '/home/v2/profile',
       type: 'nav'
     },
   ];
@@ -114,7 +114,7 @@ const LeftSidebar = () => {
 
   const isActive = (path) => {
     if (!path) return false;
-    if (path === '/v2') return location.pathname === '/v2';
+    if (path === '/home/v2') return location.pathname === '/home/v2';
     return location.pathname.startsWith(path);
   };
 

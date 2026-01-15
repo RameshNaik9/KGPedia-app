@@ -209,7 +209,7 @@ const GymkhanaAssistantPage = () => {
   }, [conversation_id, updateConversation, scrollToBottom]);
 
   const handleNewChat = useCallback(() => {
-    navigate('/v2/gymkhana-assistant');
+    navigate('/home/v2/gymkhana-assistant');
   }, [navigate]);
 
   const handleRefresh = useCallback((message) => {
