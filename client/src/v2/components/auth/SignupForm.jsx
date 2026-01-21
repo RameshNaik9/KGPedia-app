@@ -49,8 +49,12 @@ const SignupForm = ({ onSignupSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isDepartmentOpen, setIsDepartmentOpen] = useState(false);
   const [departmentDirection, setDepartmentDirection] = useState('down');
+  const [highlightedDepartment, setHighlightedDepartment] = useState('');
   const departmentRef = useRef(null);
   const departmentTriggerRef = useRef(null);
+  const departmentOptionRefs = useRef({});
+  const departmentSearchBufferRef = useRef('');
+  const departmentSearchTimeoutRef = useRef(null);
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
@@ -86,6 +90,67 @@ const SignupForm = ({ onSignupSuccess }) => {
     return () => window.removeEventListener('mousedown', handleOutsideClick);
   }, [isDepartmentOpen]);
 
+  useEffect(() => {
+    if (!isDepartmentOpen) {
+      setHighlightedDepartment('');
+      departmentSearchBufferRef.current = '';
+      return;
+    }
+
+    updateDepartmentDirection();
+    if (department) {
+      const selectedEl = departmentOptionRefs.current[department];
+      if (selectedEl) {
+        selectedEl.scrollIntoView({ block: 'start' });
+      }
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+      if (event.key === 'Backspace') {
+        departmentSearchBufferRef.current = departmentSearchBufferRef.current.slice(0, -1);
+      } else if (event.key.length === 1) {
+        departmentSearchBufferRef.current += event.key;
+      } else {
+        return;
+      }
+
+      const query = departmentSearchBufferRef.current.trim().toLowerCase();
+      if (!query) {
+        setHighlightedDepartment('');
+        return;
+      }
+
+      const match =
+        departments.find((dept) => dept.toLowerCase().startsWith(query)) ||
+        departments.find((dept) => dept.toLowerCase().includes(query));
+
+      if (match) {
+        setHighlightedDepartment(match);
+        const optionEl = departmentOptionRefs.current[match];
+        if (optionEl) {
+          optionEl.scrollIntoView({ block: 'start' });
+        }
+      }
+
+      if (departmentSearchTimeoutRef.current) {
+        clearTimeout(departmentSearchTimeoutRef.current);
+      }
+      departmentSearchTimeoutRef.current = setTimeout(() => {
+        departmentSearchBufferRef.current = '';
+      }, 700);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if (departmentSearchTimeoutRef.current) {
+        clearTimeout(departmentSearchTimeoutRef.current);
+      }
+    };
+  }, [isDepartmentOpen]);
+
   const updateDepartmentDirection = () => {
     if (!departmentTriggerRef.current) return;
     const rect = departmentTriggerRef.current.getBoundingClientRect();
@@ -105,6 +170,7 @@ const SignupForm = ({ onSignupSuccess }) => {
     setDepartment(value);
     setIsDepartmentOpen(false);
   };
+
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -206,25 +272,56 @@ const SignupForm = ({ onSignupSuccess }) => {
             aria-haspopup="listbox"
             aria-expanded={isDepartmentOpen}
           >
-            <span className={department ? '' : 'auth-select-placeholder'}>
+            <span className={`auth-select-value ${department ? '' : 'auth-select-placeholder'}`}>
               {department || 'Select Department'}
             </span>
             <Icon name={isDepartmentOpen ? 'chevronUp' : 'chevronDown'} size={16} />
           </button>
           {isDepartmentOpen && (
-            <ul className="auth-select-list" role="listbox">
-              {departments.map((dept) => (
-                <li key={dept} role="option" aria-selected={department === dept}>
-                  <button
-                    type="button"
-                    className="auth-select-option"
-                    onClick={() => handleDepartmentSelect(dept)}
-                  >
-                    {dept}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="auth-select-list">
+              <ul className="auth-select-options" role="listbox">
+                {departments.map((dept) => (
+                  <li key={dept} role="option" aria-selected={department === dept}>
+                    <button
+                      type="button"
+                      ref={(el) => {
+                        if (el) {
+                          departmentOptionRefs.current[dept] = el;
+                        }
+                      }}
+                      className={`auth-select-option ${
+                        department === dept ? 'is-selected' : ''
+                      } ${highlightedDepartment === dept ? 'is-match' : ''}`}
+                      onClick={() => handleDepartmentSelect(dept)}
+                    >
+                      <span className="auth-select-option-text">{dept}</span>
+                      {department === dept && (
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          className="auth-select-option-clear"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            setDepartment('');
+                            setHighlightedDepartment('');
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              setDepartment('');
+                              setHighlightedDepartment('');
+                            }
+                          }}
+                        >
+                          x
+                        </span>
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </label>
