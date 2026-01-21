@@ -151,7 +151,7 @@ const AuthPage = () => {
   }, [theme]); // Re-initialize when theme changes
 
   return (
-    <div className="auth-page">
+    <div className={`auth-page auth-page--${mode}`}>
       {/* Vanta.js Background */}
       <div 
         ref={vantaRef} 

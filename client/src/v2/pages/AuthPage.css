@@ -7,9 +7,9 @@
 .auth-page {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: var(--space-6) var(--space-4);
+  padding: clamp(var(--space-8), 16vh, var(--space-20)) var(--space-4) var(--space-6);
   background: transparent;
   position: relative;
   overflow: hidden;
@@ -209,6 +209,23 @@ body:has(.auth-page)::before {
 .auth-form-container {
   position: relative;
   min-height: 200px;
+  transition: min-height var(--transition-smooth);
+}
+
+.auth-form {
+  transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.auth-page--login .auth-form-container {
+  min-height: 170px;
+}
+
+.auth-page--signup .auth-form-container {
+  min-height: 280px;
+}
+
+.auth-page--signup .auth-footer {
+  margin-top: var(--space-2);
 }
 
 .auth-form {
