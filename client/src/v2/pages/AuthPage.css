@@ -489,7 +489,6 @@ body:has(.auth-page)::before {
   background: var(--accent-bg);
   color: var(--accent);
   font-weight: var(--font-semibold);
-  text-shadow: 0 0 8px var(--accent-glow);
 }
 
 .auth-select-option.is-match {
