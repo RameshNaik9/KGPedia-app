@@ -17,6 +17,14 @@ const AuthPage = () => {
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
   const overrideStyleRef = useRef(null);
+  const authPageRef = useRef(null);
+  const cursorStateRef = useRef({
+    x: 0,
+    y: 0,
+    targetX: 0,
+    targetY: 0,
+    rafId: null
+  });
 
   useEffect(() => {
     // Set body background immediately to match Vanta.js (no delay, no black flash)
@@ -150,8 +158,58 @@ const AuthPage = () => {
     };
   }, [theme]); // Re-initialize when theme changes
 
+  useEffect(() => {
+    const authEl = authPageRef.current;
+    if (!authEl) return;
+
+    const state = cursorStateRef.current;
+    const setCenter = () => {
+      const rect = authEl.getBoundingClientRect();
+      state.x = rect.width / 2;
+      state.y = rect.height / 2;
+      state.targetX = state.x;
+      state.targetY = state.y;
+      authEl.style.setProperty('--cursor-x', `${state.x}px`);
+      authEl.style.setProperty('--cursor-y', `${state.y}px`);
+    };
+
+    const update = () => {
+      const easing = 0.15;
+      state.x += (state.targetX - state.x) * easing;
+      state.y += (state.targetY - state.y) * easing;
+      authEl.style.setProperty('--cursor-x', `${state.x}px`);
+      authEl.style.setProperty('--cursor-y', `${state.y}px`);
+      state.rafId = requestAnimationFrame(update);
+    };
+
+    const handlePointerMove = (event) => {
+      const rect = authEl.getBoundingClientRect();
+      state.targetX = event.clientX - rect.left;
+      state.targetY = event.clientY - rect.top;
+    };
+
+    const handleResize = () => {
+      setCenter();
+    };
+
+    setCenter();
+    state.rafId = requestAnimationFrame(update);
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      if (state.rafId) {
+        cancelAnimationFrame(state.rafId);
+        state.rafId = null;
+      }
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <div className={`auth-page auth-page--${mode}`}>
+    <div ref={authPageRef} className={`auth-page auth-page--${mode}`}>
       {/* Vanta.js Background */}
       <div 
         ref={vantaRef} 

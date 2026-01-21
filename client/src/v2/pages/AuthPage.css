@@ -13,6 +13,9 @@
   background: transparent;
   position: relative;
   overflow: hidden;
+  --cursor-x: 50%;
+  --cursor-y: 50%;
+  --cursor-hole-size: 200px;
 }
 
 /* Ensure background is set immediately - no flicker */
@@ -47,6 +50,28 @@ body:has(.auth-page)::before {
   width: 100%;
   height: 100%;
   background: transparent;
+}
+
+/* Subtle blur layer over Vanta background without blocking interaction */
+.auth-vanta-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  -webkit-mask-image: radial-gradient(
+    circle var(--cursor-hole-size) at var(--cursor-x) var(--cursor-y),
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 45%,
+    rgba(0, 0, 0, 1) 75%
+  );
+  mask-image: radial-gradient(
+    circle var(--cursor-hole-size) at var(--cursor-x) var(--cursor-y),
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 45%,
+    rgba(0, 0, 0, 1) 75%
+  );
 }
 
 .auth-vanta-bg canvas {
