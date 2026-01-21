@@ -157,6 +157,10 @@ body:has(.auth-page)::before {
   background: var(--accent-bg);
 }
 
+[data-theme="dark"] .theme-toggle {
+  background: transparent;
+}
+
 /* Mode Toggle Buttons */
 .auth-mode-toggle {
   display: flex;
@@ -315,6 +319,98 @@ body:has(.auth-page)::before {
 .auth-label select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+}
+
+/* Custom select for departments */
+.auth-select {
+  position: relative;
+  width: 100%;
+}
+
+.auth-select-trigger {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: border var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+[data-theme="light"] .auth-select-trigger {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  color: #1a1a1a;
+}
+
+[data-theme="dark"] .auth-select-trigger {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.auth-select-trigger:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+}
+
+.auth-select-placeholder {
+  color: var(--text-tertiary);
+}
+
+.auth-select-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  max-height: min(240px, 40vh);
+  overflow-y: auto;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  z-index: 10;
+}
+
+.auth-select--up .auth-select-list {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+[data-theme="light"] .auth-select-list {
+  background: #f5f5f5;
+  border-color: #d0d0d0;
+  backdrop-filter: blur(4px);
+}
+
+[data-theme="dark"] .auth-select-list {
+  background: rgba(36, 29, 60, 0.9); /* matches --vanta-bg-dark */
+  backdrop-filter: blur(6px);
+}
+
+.auth-select-option {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.auth-select-option:hover,
+.auth-select-option:focus-visible {
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .auth-input-with-icon {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Icon from '../ui/Icon';
@@ -47,6 +47,10 @@ const SignupForm = ({ onSignupSuccess }) => {
   const [passwordError, setPasswordError] = useState('');
   const [type, setType] = useState('password');
   const [showPassword, setShowPassword] = useState(false);
+  const [isDepartmentOpen, setIsDepartmentOpen] = useState(false);
+  const [departmentDirection, setDepartmentDirection] = useState('down');
+  const departmentRef = useRef(null);
+  const departmentTriggerRef = useRef(null);
 
   const handlePasswordChange = (e) => {
     const value = e.target.value;
@@ -70,8 +74,44 @@ const SignupForm = ({ onSignupSuccess }) => {
     }
   };
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (!departmentRef.current || !isDepartmentOpen) return;
+      if (!departmentRef.current.contains(event.target)) {
+        setIsDepartmentOpen(false);
+      }
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+    return () => window.removeEventListener('mousedown', handleOutsideClick);
+  }, [isDepartmentOpen]);
+
+  const updateDepartmentDirection = () => {
+    if (!departmentTriggerRef.current) return;
+    const rect = departmentTriggerRef.current.getBoundingClientRect();
+    const dropdownHeight = Math.min(240, window.innerHeight * 0.4);
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const shouldOpenUp = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+    setDepartmentDirection(shouldOpenUp ? 'up' : 'down');
+  };
+
+  const handleDepartmentToggle = () => {
+    updateDepartmentDirection();
+    setIsDepartmentOpen((prev) => !prev);
+  };
+
+  const handleDepartmentSelect = (value) => {
+    setDepartment(value);
+    setIsDepartmentOpen(false);
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (!department) {
+      toast.error('Please select a department.');
+      return;
+    }
     if (passwordError) {
       toast.error('Please correct the errors before submitting.');
       return;
@@ -152,18 +192,41 @@ const SignupForm = ({ onSignupSuccess }) => {
 
       <label className="auth-label">
         Department
-        <select
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-          required
+        <div
+          ref={departmentRef}
+          className={`auth-select ${isDepartmentOpen ? 'auth-select--open' : ''} ${
+            departmentDirection === 'up' ? 'auth-select--up' : ''
+          }`}
         >
-          <option value="" disabled>Select Department</option>
-          {departments.map((dept) => (
-            <option key={dept} value={dept}>
-              {dept}
-            </option>
-          ))}
-        </select>
+          <button
+            ref={departmentTriggerRef}
+            type="button"
+            className="auth-select-trigger"
+            onClick={handleDepartmentToggle}
+            aria-haspopup="listbox"
+            aria-expanded={isDepartmentOpen}
+          >
+            <span className={department ? '' : 'auth-select-placeholder'}>
+              {department || 'Select Department'}
+            </span>
+            <Icon name={isDepartmentOpen ? 'chevronUp' : 'chevronDown'} size={16} />
+          </button>
+          {isDepartmentOpen && (
+            <ul className="auth-select-list" role="listbox">
+              {departments.map((dept) => (
+                <li key={dept} role="option" aria-selected={department === dept}>
+                  <button
+                    type="button"
+                    className="auth-select-option"
+                    onClick={() => handleDepartmentSelect(dept)}
+                  >
+                    {dept}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </label>
 
       <label className="auth-label auth-label--full">

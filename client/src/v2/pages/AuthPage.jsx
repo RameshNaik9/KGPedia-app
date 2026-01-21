@@ -26,7 +26,7 @@ const AuthPage = () => {
     
     // Set immediately with fallback
     document.body.style.backgroundColor = fallbackBg;
-    document.body.style.transition = 'background-color 0.3s ease';
+    document.body.style.transition = 'background-color 0.1s ease';
     
     // Update with CSS variable value (if available)
     const backgroundColor = getVantaBackgroundColor(theme);
@@ -114,7 +114,7 @@ const AuthPage = () => {
         scaleMobile: 1.00,
         color: color,
         backgroundColor: backgroundColor,
-        points: 10,
+        points: 15,
         maxDistance: 20,
         spacing: 15,
         showDots: true
