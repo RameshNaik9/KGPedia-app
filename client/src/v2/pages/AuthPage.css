@@ -104,13 +104,19 @@ body:has(.auth-page)::before {
 
 /* Light mode: more opaque card for better contrast */
 [data-theme="light"] .auth-card {
-  background: rgba(255, 255, 255, 0.95);
+  /* background: rgba(255, 255, 255, 0.7); */
+  background: rgba(var(--transparent-bg-dark), 0.3);
   border-color: var(--border-default);
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
 }
 
 /* Dark mode: semi-transparent with backdrop */
 [data-theme="dark"] .auth-card {
-  background: rgba(var(--surface-primary-rgb), 0.85);
+  /* background: rgba(var(--surface-primary-rgb), 0.85); */
+  background: rgba(var(--transparent-bg-dark), 0.6);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
 .auth-card--wide {
