@@ -40,6 +40,7 @@ export { conversationApi } from './services';
 
 // Pages
 export { 
+  AuthPage as AuthPageV2,
   HomePage as HomePageV2,
   CareerAssistantPage as CareerAssistantPageV2,
   CareerAssistantWelcome as CareerAssistantWelcomeV2,
