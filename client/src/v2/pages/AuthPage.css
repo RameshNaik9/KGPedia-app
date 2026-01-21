@@ -319,9 +319,11 @@ body:has(.auth-page)::before {
 
 [data-theme="light"] .auth-label input,
 [data-theme="light"] .auth-label select {
-  background: #f5f5f5;
-  border-color: #d0d0d0;
+  background: rgba(245, 245, 245, 0.7);
+  border-color: rgba(208, 208, 208, 0.8);
   color: #1a1a1a;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
 }
 
 [data-theme="dark"] .auth-label input,
@@ -540,8 +542,10 @@ body:has(.auth-page)::before {
 }
 
 [data-theme="light"] .auth-input-with-icon {
-  background: #f5f5f5;
-  border-color: #d0d0d0;
+  background: rgba(245, 245, 245, 0.7);
+  border-color: rgba(208, 208, 208, 0.8);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
 }
 
 [data-theme="dark"] .auth-input-with-icon {
