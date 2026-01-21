@@ -2,6 +2,8 @@
    V2 Auth Pages - Web3 styled login/signup
    ========================================================================== */
 
+@import '../styles/variables.css';
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -14,13 +16,28 @@
 }
 
 /* Ensure background is set immediately - no flicker */
+/* Colors use CSS variables - change in variables.css */
 body:has(.auth-page) {
-  background: #241d3c; /* Dark theme default */
+  background: var(--vanta-bg-dark) !important; /* Dark theme - matches Vanta.js backgroundColor */
   background-attachment: fixed;
+  transition: background-color 0.3s ease;
+}
+
+/* Override the blue gradient from HomeComponent.css */
+body:has(.auth-page)::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
 }
 
 [data-theme="light"] body:has(.auth-page) {
-  background: #f8f9fa; /* Light theme default */
+  background: var(--vanta-bg-light) !important; /* Light theme - matches Vanta.js backgroundColor */
+}
+
+[data-theme="light"] body:has(.auth-page)::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
 }
 
 .auth-vanta-bg {
@@ -29,12 +46,19 @@ body:has(.auth-page) {
   z-index: 0;
   width: 100%;
   height: 100%;
+  background: transparent;
 }
 
 .auth-vanta-bg canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
+  opacity: 0;
+  transition: opacity 0.8s ease-in;
+}
+
+.auth-vanta-bg.vanta-loaded canvas {
+  opacity: 1;
 }
 
 .auth-glow {

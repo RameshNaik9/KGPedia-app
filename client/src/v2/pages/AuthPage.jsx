@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Icon from '../components/ui/Icon';
 import { useTheme } from '../context/ThemeContext';
+import { getVantaColors, getVantaBackgroundColor } from '../utils/vantaColors';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import './AuthPage.css';
@@ -13,10 +14,42 @@ const KGPEDIA_LOGO = '/icons/kgpedia-seconday-logo-3D-v2.svg';
 const AuthPage = () => {
   const { theme, toggleTheme } = useTheme();
   const [mode, setMode] = useState('login'); // 'login' or 'signup'
+  const [vantaLoaded, setVantaLoaded] = useState(false);
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
+  const overrideStyleRef = useRef(null);
 
   useEffect(() => {
+    // Set body background immediately to match Vanta.js (no delay, no black flash)
+    // Use fallback values first, then update with CSS variables if available
+    const isDark = theme === 'dark';
+    const fallbackBg = isDark ? '#241d3c' : '#ffffff';
+    
+    // Set immediately with fallback
+    document.body.style.backgroundColor = fallbackBg;
+    document.body.style.transition = 'background-color 0.3s ease';
+    
+    // Update with CSS variable value (if available)
+    const backgroundColor = getVantaBackgroundColor(theme);
+    if (backgroundColor && backgroundColor !== fallbackBg) {
+      document.body.style.backgroundColor = backgroundColor;
+    }
+    
+    // Remove any body::before pseudo-elements (from HomeComponent.css)
+    if (!overrideStyleRef.current) {
+      const style = document.createElement('style');
+      style.id = 'auth-page-override';
+      style.textContent = `
+        body:has(.auth-page)::before {
+          display: none !important;
+          content: none !important;
+          background: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+      overrideStyleRef.current = style;
+    }
+
     // Load Vanta.js scripts dynamically
     const loadVanta = async () => {
       // Check if scripts are already loaded
@@ -59,15 +92,16 @@ const AuthPage = () => {
     const initVanta = () => {
       if (!vantaRef.current || !window.VANTA) return;
 
+      // Reset loaded state for fade-in
+      setVantaLoaded(false);
+
       // Clean up previous effect
       if (vantaEffect.current) {
         vantaEffect.current.destroy();
       }
 
-      // Theme-based colors
-      const isDark = theme === 'dark';
-      const color = isDark ? 0x3f99ff : 0x6366f1; // Blue for dark, indigo for light
-      const backgroundColor = isDark ? 0x241d3c : 0xf8f9fa; // Dark purple for dark, light gray for light
+      // Get theme-based colors from CSS variables
+      const { color, backgroundColor } = getVantaColors(theme);
 
       // Initialize Vanta.NET
       vantaEffect.current = window.VANTA.NET({
@@ -86,6 +120,16 @@ const AuthPage = () => {
         spacing: 15,
         showDots: true
       });
+
+      // Add fade-in effect after initialization
+      if (vantaRef.current) {
+        // Wait a frame for canvas to be created
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            setVantaLoaded(true);
+          }, 100);
+        });
+      }
     };
 
     loadVanta();
@@ -96,13 +140,25 @@ const AuthPage = () => {
         vantaEffect.current.destroy();
         vantaEffect.current = null;
       }
+      // Remove override style
+      if (overrideStyleRef.current) {
+        overrideStyleRef.current.remove();
+        overrideStyleRef.current = null;
+      }
+      // Reset body background on unmount
+      document.body.style.backgroundColor = '';
+      document.body.style.transition = '';
     };
   }, [theme]); // Re-initialize when theme changes
 
   return (
     <div className="auth-page">
       {/* Vanta.js Background */}
-      <div ref={vantaRef} className="auth-vanta-bg" aria-hidden="true" />
+      <div 
+        ref={vantaRef} 
+        className={`auth-vanta-bg ${vantaLoaded ? 'vanta-loaded' : ''}`} 
+        aria-hidden="true" 
+      />
       
       {/* Auth Card */}
       <div className="auth-card auth-card--wide">
