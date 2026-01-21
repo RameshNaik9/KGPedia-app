@@ -7,9 +7,6 @@ export { default as HomePage } from './HomePage';
 
 // Auth
 export { default as AuthPage } from './AuthPage';
-// Keep old exports for backward compatibility (if needed)
-export { default as AuthLogin } from './AuthLogin';
-export { default as AuthSignup } from './AuthSignup';
 
 // Career Assistant
 export { default as CareerAssistantPage } from './CareerAssistantPage';

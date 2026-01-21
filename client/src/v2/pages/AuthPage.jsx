@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Icon from '../components/ui/Icon';
 import { useTheme } from '../context/ThemeContext';
 import { getVantaColors, getVantaBackgroundColor } from '../utils/vantaColors';
-import LoginForm from './LoginForm';
-import SignupForm from './SignupForm';
+import LoginForm from '../components/auth/LoginForm';
+import SignupForm from '../components/auth/SignupForm';
 import './AuthPage.css';
 
 const KGPEDIA_LOGO = '/icons/kgpedia-seconday-logo-3D-v2.svg';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Icon from '../components/ui/Icon';
+import Icon from '../ui/Icon';
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://www.kgpedia.com';
 
