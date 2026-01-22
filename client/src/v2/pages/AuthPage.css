@@ -242,7 +242,8 @@ body.auth-page-active::before {
 .auth-form-container {
   position: relative;
   min-height: 200px;
-  transition: min-height var(--transition-smooth);
+  transition: min-height var(--transition-base);
+  will-change: min-height;
 }
 
 .auth-form {
@@ -615,6 +616,11 @@ body.auth-page-active::before {
 .auth-helper-text {
   font-size: 10px;
   color: var(--error);
+}
+
+.auth-helper-text--large {
+  font-size: var(--text-sm);
+  line-height: 1.5;
 }
 
 .auth-submit {
