@@ -1,7 +1,5 @@
 import React, { useMemo, useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Icon from '../components/ui/Icon';
 import { useTheme } from '../context/ThemeContext';
 import { getVantaColors, getVantaBackgroundColor } from '../utils/vantaColors';
@@ -317,12 +315,6 @@ const AuthPage = () => {
         </div>
       </div>
       
-      <ToastContainer
-        toastClassName="Toastify__toast--custom"
-        bodyClassName="Toastify__toast-body--custom"
-        position="top-right"
-        closeButton={false}
-      />
     </div>
   );
 };

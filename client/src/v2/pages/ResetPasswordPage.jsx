@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer } from 'react-toastify';
 import { toastError, toastSuccess, toastWarn } from '../utils/toast';
 import { useTheme } from '../context/ThemeContext';
 import { getVantaBackgroundColor, getVantaColors } from '../utils/vantaColors';
@@ -238,9 +237,9 @@ const ResetPasswordPage = () => {
           toastError('Reset link expired. Request a new one.');
           return;
         }
-        toastError('Unable to reset password.');
+        toastError('Server error. Please try again.');
       } else {
-        toastError('Unable to reset password. Try again.');
+        toastError('Server error. Please try again.');
       }
     } finally {
       setIsSubmitting(false);
@@ -300,12 +299,6 @@ const ResetPasswordPage = () => {
         </div>
       </div>
 
-      <ToastContainer
-        toastClassName="Toastify__toast--custom"
-        bodyClassName="Toastify__toast-body--custom"
-        position="top-right"
-        closeButton={false}
-      />
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer } from 'react-toastify';
 import { toastError, toastSuccess, toastWarn } from '../utils/toast';
 import { useTheme } from '../context/ThemeContext';
 import { getVantaBackgroundColor, getVantaColors } from '../utils/vantaColors';
@@ -219,7 +218,7 @@ const ForgotPasswordPage = () => {
       toastSuccess('If an account exists, we sent a reset link.');
     } catch (error) {
       console.error('Forgot password failed:', error.message);
-      toastError('Could not send email. Try again.');
+      toastError('Server error. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -274,12 +273,6 @@ const ForgotPasswordPage = () => {
         </div>
       </div>
 
-      <ToastContainer
-        toastClassName="Toastify__toast--custom"
-        bodyClassName="Toastify__toast-body--custom"
-        position="top-right"
-        closeButton={false}
-      />
     </div>
   );
 };

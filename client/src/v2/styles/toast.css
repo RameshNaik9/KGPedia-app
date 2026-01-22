@@ -1,0 +1,508 @@
+/* ==========================================================================
+   KGPedia v2 Toast Notifications - iOS 26 Glassmorphism Style
+   ========================================================================== */
+
+/* ==========================================================================
+   Toast Container Overrides
+   ========================================================================== */
+
+/* Override Toastify container positioning */
+.Toastify__toast-container {
+  z-index: 99999 !important;
+  pointer-events: none;
+}
+
+.Toastify__toast-container > div {
+  pointer-events: auto;
+}
+
+/* Top-right positioning for bar toasts */
+.Toastify__toast-container--top-right {
+  top: 16px !important;
+  right: 16px !important;
+}
+
+/* Bottom-center positioning for card toasts */
+.Toastify__toast-container--bottom-center {
+  bottom: 32px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+/* ==========================================================================
+   Toast Wrapper - Base Styles
+   ========================================================================== */
+
+.kg-toast-wrapper,
+.Toastify__toast {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin-bottom: 12px !important;
+  min-height: auto !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+.kg-toast-body,
+.Toastify__toast-body {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Hide default toast icon */
+.Toastify__toast-icon {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Toast Close Button
+   ========================================================================== */
+
+.Toastify__close-button {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  opacity: 0.6 !important;
+  color: currentColor !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 4px !important;
+  border-radius: 50% !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  z-index: 10 !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="dark"] .Toastify__close-button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.Toastify__close-button > svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* ==========================================================================
+   KG Toast - Base Component
+   ========================================================================== */
+
+.kg-toast {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-family: var(--font-family-base, 'Inter', -apple-system, sans-serif);
+  color: var(--text-primary, #171717);
+}
+
+/* ==========================================================================
+   Toast Style: Bar (Top-Right - Error/Warn)
+   Compact horizontal layout
+   ========================================================================== */
+
+.kg-toast--bar {
+  flex-direction: row;
+  align-items: center;
+  padding: 14px 40px 14px 16px;
+  min-width: 280px;
+  max-width: 380px;
+  border-radius: 14px;
+  
+  /* iOS 26 Glassmorphism */
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+[data-theme="dark"] .kg-toast--bar {
+  background: rgba(30, 30, 35, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #f5f5f5;
+}
+
+.kg-toast--bar .kg-toast__icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.kg-toast--bar .kg-toast__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.kg-toast--bar .kg-toast__title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.kg-toast--bar .kg-toast__message {
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ==========================================================================
+   Toast Style: Card (Bottom-Center - Success/Info)
+   Large centered card layout
+   ========================================================================== */
+
+.kg-toast--card {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 24px 28px 20px;
+  width: 220px;
+  border-radius: 24px;
+  
+  /* iOS 26 Glassmorphism - More prominent */
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 10px 20px rgba(0, 0, 0, 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+}
+
+[data-theme="dark"] .kg-toast--card {
+  background: rgba(25, 25, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    0 10px 20px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #f5f5f5;
+}
+
+.kg-toast--card .kg-toast__icon {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 8px;
+}
+
+.kg-toast--card .kg-toast__title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.kg-toast--card .kg-toast__message {
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.75;
+  max-width: 180px;
+}
+
+/* ==========================================================================
+   Toast Icon Styles
+   ========================================================================== */
+
+.kg-toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Success - Green */
+.kg-toast--success .kg-toast__icon {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+  box-shadow: inset 0 0 0 1.5px rgba(34, 197, 94, 0.3);
+}
+
+[data-theme="dark"] .kg-toast--success .kg-toast__icon {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  box-shadow: inset 0 0 0 1.5px rgba(34, 197, 94, 0.35);
+}
+
+/* Error - Red */
+.kg-toast--error .kg-toast__icon {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.3);
+}
+
+[data-theme="dark"] .kg-toast--error .kg-toast__icon {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.35);
+}
+
+/* Warning - Amber */
+.kg-toast--warn .kg-toast__icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: #d97706;
+  box-shadow: inset 0 0 0 1.5px rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="dark"] .kg-toast--warn .kg-toast__icon {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  box-shadow: inset 0 0 0 1.5px rgba(245, 158, 11, 0.35);
+}
+
+/* Info - Blue */
+.kg-toast--info .kg-toast__icon {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+  box-shadow: inset 0 0 0 1.5px rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .kg-toast--info .kg-toast__icon {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  box-shadow: inset 0 0 0 1.5px rgba(59, 130, 246, 0.35);
+}
+
+/* ==========================================================================
+   Animations - Top-Right (Bar) - Slide In/Out
+   ========================================================================== */
+
+/* Enter animation for top-right */
+.kg-toast-animate-in-top-right {
+  animation: toastSlideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Exit animation for top-right */
+.kg-toast-animate-out-top-right {
+  animation: toastSlideOutRight 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes toastSlideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(80%) scale(0.95);
+  }
+}
+
+/* ==========================================================================
+   Animations - Bottom-Center (Card) - Blur Fade In/Out
+   The toast appears in place with blur-to-clear effect
+   ========================================================================== */
+
+/* Enter animation for bottom-center - blur fade in */
+.kg-toast-animate-in-bottom-center {
+  animation: toastBlurFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Exit animation for bottom-center - blur fade out */
+.kg-toast-animate-out-bottom-center {
+  animation: toastBlurFadeOut 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes toastBlurFadeIn {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.7;
+    filter: blur(4px);
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+@keyframes toastBlurFadeOut {
+  0% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(6px);
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(14px);
+    transform: scale(0.9);
+  }
+}
+
+/* ==========================================================================
+   Fallback animations for other positions
+   ========================================================================== */
+
+.kg-toast-animate-in-top-left {
+  animation: toastSlideInLeft 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.kg-toast-animate-out-top-left {
+  animation: toastSlideOutLeft 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.kg-toast-animate-in-top-center {
+  animation: toastSlideInTop 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.kg-toast-animate-out-top-center {
+  animation: toastSlideOutTop 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.kg-toast-animate-in-bottom-left {
+  animation: toastSlideInLeft 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.kg-toast-animate-out-bottom-left {
+  animation: toastSlideOutLeft 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.kg-toast-animate-in-bottom-right {
+  animation: toastSlideInRight 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.kg-toast-animate-out-bottom-right {
+  animation: toastSlideOutRight 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes toastSlideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOutLeft {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-80%) scale(0.95);
+  }
+}
+
+@keyframes toastSlideInTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOutTop {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80%) scale(0.95);
+  }
+}
+
+/* ==========================================================================
+   Progress Bar (hidden by default, but styled if enabled)
+   ========================================================================== */
+
+.Toastify__progress-bar {
+  display: none;
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .Toastify__toast-container--top-right {
+    top: 12px !important;
+    right: 12px !important;
+    left: 12px !important;
+    width: auto !important;
+  }
+  
+  .Toastify__toast-container--bottom-center {
+    bottom: 20px !important;
+    left: 50% !important;
+    right: auto !important;
+    width: auto !important;
+  }
+  
+  .kg-toast--bar {
+    min-width: auto;
+    max-width: 100%;
+  }
+  
+  .kg-toast--card {
+    width: 200px;
+    padding: 20px 24px 18px;
+  }
+  
+  .kg-toast--card .kg-toast__icon {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .kg-toast--card .kg-toast__title {
+    font-size: 15px;
+  }
+  
+  .kg-toast--card .kg-toast__message {
+    font-size: 12px;
+  }
+}
+

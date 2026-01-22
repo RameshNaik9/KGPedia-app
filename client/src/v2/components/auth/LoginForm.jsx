@@ -47,10 +47,10 @@ const LoginForm = () => {
     } catch (error) {
       console.error('Login failed:', error.message);
       if (error.response && (error.response.status === 400 || error.response.status === 401)) {
-        toastError('Incorrect email or password.');
+        toastError('Email or password is incorrect.');
         return;
       }
-      toastError('Login failed. Try again.');
+      toastError('Server error. Please try again.');
     }
   };
 

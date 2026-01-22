@@ -227,7 +227,7 @@ const SignupForm = ({ onSignupSuccess }) => {
         toastWarn('Enter a valid roll number.');
         return;
       }
-      toastError('Signup failed. Try again.');
+      toastError('Server error. Please try again.');
     }
   };
 
