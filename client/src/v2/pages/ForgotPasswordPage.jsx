@@ -38,12 +38,12 @@ const ForgotPasswordPage = () => {
 
   useLayoutEffect(() => {
     const isDark = theme === 'dark';
-    const fallbackBg = isDark ? '#241d3c' : '#ffffff';
+    const fallbackBg = isDark ? '#241d3c' : '#eaf6ff';
     document.body.style.backgroundColor = fallbackBg;
     document.body.style.transition = 'background-color 0.1s ease';
 
-    const backgroundColor = getVantaBackgroundColor(theme);
-    const resolvedBg = backgroundColor || fallbackBg;
+    const backgroundColor = getVantaBackgroundColor('dark');
+    const resolvedBg = isDark ? (backgroundColor || fallbackBg) : '#eaf6ff';
     if (resolvedBg && resolvedBg !== fallbackBg) {
       document.body.style.backgroundColor = resolvedBg;
     }
@@ -120,7 +120,7 @@ const ForgotPasswordPage = () => {
       const isDarkTheme = theme === 'dark';
       const { color: darkColor, backgroundColor: darkBg } = getVantaColors('dark');
       const lightVantaColor = 0x3f99ff;
-      const lightVantaBackground = 0xffffff;
+      const lightVantaBackground = 0xeaf6ff;
       const color = isDarkTheme ? darkColor : lightVantaColor;
       const backgroundColor = isDarkTheme ? darkBg : lightVantaBackground;
 
