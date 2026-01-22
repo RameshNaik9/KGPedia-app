@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toastError, toastSuccess, toastWarn } from '../../utils/toast';
 import Icon from '../ui/Icon';
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://www.kgpedia.com';
@@ -26,7 +26,7 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (email.trim() === '' || password.trim() === '') {
-      toast.error('Please provide both email and password.');
+      toastWarn('Enter email and password.');
       return;
     }
     try {
@@ -39,18 +39,18 @@ const LoginForm = () => {
         localStorage.setItem('rollNumber', response.data.user.rollNumber);
         localStorage.setItem('department', response.data.user.department);
         localStorage.setItem('isVerified', response.data.user.isVerified);
-        toast.success('Login successful!');
+        toastSuccess('Login successful.');
         navigate('/home/v2');
       } else {
-        toast.error('Invalid email or password. Please try again.');
+        toastError('Incorrect email or password.');
       }
     } catch (error) {
       console.error('Login failed:', error.message);
-      if (error.response && error.response.data && error.response.data.error) {
-        toast.error(error.response.data.error);
-      } else {
-        toast.error('An unexpected error occurred. Please try again.');
+      if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+        toastError('Incorrect email or password.');
+        return;
       }
+      toastError('Login failed. Try again.');
     }
   };
 

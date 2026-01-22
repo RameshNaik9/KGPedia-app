@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toastError, toastSuccess, toastWarn } from '../../utils/toast';
 import Icon from '../ui/Icon';
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'https://www.kgpedia.com';
@@ -175,11 +175,11 @@ const SignupForm = ({ onSignupSuccess }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     if (!department) {
-      toast.error('Please select a department.');
+      toastWarn('Please select a department.');
       return;
     }
     if (passwordError) {
-      toast.error('Please correct the errors before submitting.');
+      toastWarn('Use a stronger password.');
       return;
     }
     try {
@@ -197,24 +197,37 @@ const SignupForm = ({ onSignupSuccess }) => {
         setFullName('');
         setEmail('');
         setPassword('');
-        toast.success('Registration successful!');
+        toastSuccess('Account created. Please login.');
         // Switch to login mode after a short delay
         setTimeout(() => {
           if (onSignupSuccess) {
             onSignupSuccess();
           }
-          toast.info('Please login with your credentials.');
+          toastSuccess('Please login with your credentials.');
         }, 1500);
       } else {
-        toast.error('Signup failed. Please try again.');
+        toastError('Signup failed. Try again.');
       }
     } catch (error) {
       console.error('Signup failed:', error.message);
-      if (error.response && error.response.data && error.response.data.error) {
-        toast.error(error.response.data.error);
-      } else {
-        toast.error('An unexpected error occurred. Please try again.');
+      const serverMessage = error.response?.data?.error || '';
+      if (serverMessage.includes('Roll Number') || serverMessage.includes('Roll number')) {
+        toastError('Roll number already registered.');
+        return;
       }
+      if (serverMessage.includes('Email') || serverMessage.includes('registered')) {
+        toastError('Email already registered.');
+        return;
+      }
+      if (serverMessage.includes('IIT Kharagpur email')) {
+        toastWarn('Use your IIT KGP email.');
+        return;
+      }
+      if (serverMessage.includes('Invalid Roll Number')) {
+        toastWarn('Enter a valid roll number.');
+        return;
+      }
+      toastError('Signup failed. Try again.');
     }
   };
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { toastError, toastSuccess, toastWarn } from '../utils/toast';
 import { useTheme } from '../context/ThemeContext';
 import { getVantaBackgroundColor, getVantaColors } from '../utils/vantaColors';
 import './AuthPage.css';
@@ -210,15 +211,15 @@ const ResetPasswordPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!token) {
-      toast.error('Invalid reset link. Please request a new one.');
+      toastError('Invalid reset link.');
       return;
     }
     if (password.length < 4 || password.length > 128) {
-      toast.error('Password must be between 4 and 128 characters.');
+      toastWarn('Password must be 4-128 characters.');
       return;
     }
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match.');
+      toastWarn('Passwords do not match.');
       return;
     }
 
@@ -228,14 +229,18 @@ const ResetPasswordPage = () => {
         token,
         password,
       });
-      toast.success('Password reset successful. Please login.');
+      toastSuccess('Password updated. Please login.');
       navigate('/v2/auth', { replace: true, state: { mode: 'login' } });
     } catch (error) {
       console.error('Reset password failed:', error.message);
       if (error.response && error.response.data && error.response.data.error) {
-        toast.error(error.response.data.error);
+        if (error.response.data.error.includes('Invalid or expired')) {
+          toastError('Reset link expired. Request a new one.');
+          return;
+        }
+        toastError('Unable to reset password.');
       } else {
-        toast.error('Unable to reset password. Please try again.');
+        toastError('Unable to reset password. Try again.');
       }
     } finally {
       setIsSubmitting(false);
@@ -295,7 +300,12 @@ const ResetPasswordPage = () => {
         </div>
       </div>
 
-      <ToastContainer toastClassName="Toastify__toast--custom" />
+      <ToastContainer
+        toastClassName="Toastify__toast--custom"
+        bodyClassName="Toastify__toast-body--custom"
+        position="top-right"
+        closeButton={false}
+      />
     </div>
   );
 };

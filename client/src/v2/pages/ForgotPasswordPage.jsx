@@ -1,7 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { toastError, toastSuccess, toastWarn } from '../utils/toast';
 import { useTheme } from '../context/ThemeContext';
 import { getVantaBackgroundColor, getVantaColors } from '../utils/vantaColors';
 import './AuthPage.css';
@@ -207,7 +208,7 @@ const ForgotPasswordPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!email.trim()) {
-      toast.error('Please enter your email.');
+      toastWarn('Enter your email.');
       return;
     }
 
@@ -215,10 +216,10 @@ const ForgotPasswordPage = () => {
     try {
       await axios.post(`${apiBaseUrl}/api/auth/forgot-password`, { email });
       setIsSubmitted(true);
-      toast.success('If an account exists, a reset link has been sent.');
+      toastSuccess('If an account exists, we sent a reset link.');
     } catch (error) {
       console.error('Forgot password failed:', error.message);
-      toast.error('Unable to process request. Please try again.');
+      toastError('Could not send email. Try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -273,7 +274,12 @@ const ForgotPasswordPage = () => {
         </div>
       </div>
 
-      <ToastContainer toastClassName="Toastify__toast--custom" />
+      <ToastContainer
+        toastClassName="Toastify__toast--custom"
+        bodyClassName="Toastify__toast-body--custom"
+        position="top-right"
+        closeButton={false}
+      />
     </div>
   );
 };
