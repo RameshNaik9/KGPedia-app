@@ -2,6 +2,9 @@
  * Pages - Barrel export
  */
 
+// Landing
+export { default as LandingPage } from './LandingPage';
+
 // Home
 export { default as HomePage } from './HomePage';
 

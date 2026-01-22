@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useMemo, useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Icon from '../components/ui/Icon';
@@ -12,7 +13,13 @@ const KGPEDIA_LOGO = '/icons/kgpedia-seconday-logo-3D-v2.svg';
 
 const AuthPage = () => {
   const { theme, toggleTheme } = useTheme();
-  const [mode, setMode] = useState('login'); // 'login' or 'signup'
+  const location = useLocation();
+  const requestedMode = useMemo(() => {
+    const stateMode = location.state?.mode;
+    if (stateMode === 'login' || stateMode === 'signup') return stateMode;
+    return 'login';
+  }, [location.state]);
+  const [mode, setMode] = useState(requestedMode); // 'login' or 'signup'
   const [vantaLoaded, setVantaLoaded] = useState(false);
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
@@ -79,6 +86,10 @@ const AuthPage = () => {
       document.body.style.transition = '';
     };
   }, []);
+
+  useEffect(() => {
+    setMode(requestedMode);
+  }, [requestedMode]);
 
   useEffect(() => {
     // Load Vanta.js scripts dynamically
