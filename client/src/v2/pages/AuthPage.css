@@ -445,11 +445,26 @@ body:has(.auth-page)::before {
   box-shadow: var(--shadow-lg);
   padding: 6px;
   z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scaleY(0.96);
+  transform-origin: top;
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility 0s linear 150ms;
 }
 
 .auth-select--up .auth-select-list {
   top: auto;
   bottom: calc(100% + 6px);
+  transform: translateY(-6px);
+}
+
+.auth-select--open .auth-select-list {
+  opacity: 1;
+  transform: scaleY(1);
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity var(--transition-fast), transform var(--transition-fast), visibility 0s;
 }
 
 [data-theme="light"] .auth-select-list {

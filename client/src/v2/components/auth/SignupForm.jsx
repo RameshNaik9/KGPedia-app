@@ -277,52 +277,50 @@ const SignupForm = ({ onSignupSuccess }) => {
             </span>
             <Icon name={isDepartmentOpen ? 'chevronUp' : 'chevronDown'} size={16} />
           </button>
-          {isDepartmentOpen && (
-            <div className="auth-select-list">
-              <ul className="auth-select-options" role="listbox">
-                {departments.map((dept) => (
-                  <li key={dept} role="option" aria-selected={department === dept}>
-                    <button
-                      type="button"
-                      ref={(el) => {
-                        if (el) {
-                          departmentOptionRefs.current[dept] = el;
-                        }
-                      }}
-                      className={`auth-select-option ${
-                        department === dept ? 'is-selected' : ''
-                      } ${highlightedDepartment === dept ? 'is-match' : ''}`}
-                      onClick={() => handleDepartmentSelect(dept)}
-                    >
-                      <span className="auth-select-option-text">{dept}</span>
-                      {department === dept && (
-                        <span
-                          role="button"
-                          tabIndex={0}
-                          className="auth-select-option-clear"
-                          onClick={(event) => {
+          <div className="auth-select-list" aria-hidden={!isDepartmentOpen}>
+            <ul className="auth-select-options" role="listbox">
+              {departments.map((dept) => (
+                <li key={dept} role="option" aria-selected={department === dept}>
+                  <button
+                    type="button"
+                    ref={(el) => {
+                      if (el) {
+                        departmentOptionRefs.current[dept] = el;
+                      }
+                    }}
+                    className={`auth-select-option ${
+                      department === dept ? 'is-selected' : ''
+                    } ${highlightedDepartment === dept ? 'is-match' : ''}`}
+                    onClick={() => handleDepartmentSelect(dept)}
+                  >
+                    <span className="auth-select-option-text">{dept}</span>
+                    {department === dept && (
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        className="auth-select-option-clear"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          setDepartment('');
+                          setHighlightedDepartment('');
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
                             event.preventDefault();
-                            event.stopPropagation();
                             setDepartment('');
                             setHighlightedDepartment('');
-                          }}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                              event.preventDefault();
-                              setDepartment('');
-                              setHighlightedDepartment('');
-                            }
-                          }}
-                        >
-                          x
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+                          }
+                        }}
+                      >
+                        x
+                      </span>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </label>
 
