@@ -10,6 +10,8 @@ import {
     V2LayoutWrapper,
     LandingPageV2,
     AuthPageV2,
+    ForgotPasswordPageV2,
+    ResetPasswordPageV2,
     ThemeProvider,
     HomePageV2,
     CareerAssistantPageV2,
@@ -30,6 +32,8 @@ function RoutesConfig() {
                     {/* Public Routes */}
                     <Route path="/" element={<LandingPageV2 />} />
                     <Route path="/v2/auth" element={<AuthPageV2 />} />
+                    <Route path="/v2/auth/forgot-password" element={<ForgotPasswordPageV2 />} />
+                    <Route path="/v2/auth/reset-password" element={<ResetPasswordPageV2 />} />
                     {/* Legacy auth routes - redirect to unified auth */}
                     <Route path="/v2/login" element={<Navigate to="/v2/auth" replace state={{ mode: 'login' }} />} />
                     <Route path="/v2/signup" element={<Navigate to="/v2/auth" replace state={{ mode: 'signup' }} />} />

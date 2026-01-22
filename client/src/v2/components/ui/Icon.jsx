@@ -29,6 +29,20 @@ const icons = {
       <circle cx="15" cy="9" r="1" fill="currentColor" stroke="none" />
     </>
   ),
+  info: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 10v6" strokeLinecap="round" />
+      <circle cx="12" cy="7" r="1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  alertTriangle: (
+    <>
+      <path d="M12 3l10 18H2L12 3z" strokeLinejoin="round" />
+      <path d="M12 9v5" strokeLinecap="round" />
+      <circle cx="12" cy="17" r="1" fill="currentColor" stroke="none" />
+    </>
+  ),
   settings: (
     <>
       <circle cx="12" cy="12" r="3" />

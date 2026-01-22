@@ -317,7 +317,12 @@ const AuthPage = () => {
         </div>
       </div>
       
-      <ToastContainer toastClassName="Toastify__toast--custom" />
+      <ToastContainer
+        toastClassName="Toastify__toast--custom"
+        bodyClassName="Toastify__toast-body--custom"
+        position="top-right"
+        closeButton={false}
+      />
     </div>
   );
 };

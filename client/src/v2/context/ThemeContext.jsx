@@ -12,7 +12,10 @@ export const ThemeProvider = ({ children }) => {
     const savedTheme = localStorage.getItem('kgpedia-theme');
     if (savedTheme) return savedTheme;
 
-    return 'dark';
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
   });
   
   const appRef = useRef(null);
