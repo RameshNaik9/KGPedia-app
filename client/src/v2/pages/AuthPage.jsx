@@ -54,10 +54,12 @@ const AuthPage = () => {
       const style = document.createElement('style');
       style.id = 'auth-page-override';
       style.textContent = `
-        body.auth-page-active::before {
+        body::before {
           display: none !important;
           content: none !important;
           background: none !important;
+          filter: none !important;
+          opacity: 0 !important;
         }
       `;
       document.head.appendChild(style);
