@@ -11,12 +11,8 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('kgpedia-theme');
     if (savedTheme) return savedTheme;
-    
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    
-    return 'light';
+
+    return 'dark';
   });
   
   const appRef = useRef(null);
