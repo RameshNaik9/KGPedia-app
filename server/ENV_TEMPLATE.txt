@@ -11,6 +11,19 @@ MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/kgpedia?retryWri
 # JWT Secret (Generate using: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))")
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
+# App URL (used in email links)
+APP_BASE_URL=http://localhost:3000
+
+# SMTP (Zoho Mail)
+SMTP_HOST=smtp.zoho.in
+SMTP_PORT=465
+SMTP_USER=ramesh@kgpedia.com
+SMTP_PASS=your-zoho-app-password
+SMTP_FROM=contact@kgpedia.com
+
+# Logging
+LOG_LEVEL=info
+
 # VAPID Keys for Web Push Notifications (Generate using: npx web-push generate-vapid-keys)
 PUBLIC_VAPID_KEY=your-public-vapid-key-from-web-push-command
 PRIVATE_VAPID_KEY=your-private-vapid-key-from-web-push-command

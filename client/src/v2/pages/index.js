@@ -10,6 +10,8 @@ export { default as HomePage } from './HomePage';
 
 // Auth
 export { default as AuthPage } from './AuthPage';
+export { default as ForgotPasswordPage } from './ForgotPasswordPage';
+export { default as ResetPasswordPage } from './ResetPasswordPage';
 
 // Career Assistant
 export { default as CareerAssistantPage } from './CareerAssistantPage';

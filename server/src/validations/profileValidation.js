@@ -80,4 +80,39 @@ const loginValidation = (data) => {
     return schema.validate(data);
 };
 
-module.exports = { signupValidation, loginValidation };
+// Validation schema for forgot password
+const forgotPasswordValidation = (data) => {
+    const schema = Joi.object({
+        email: Joi.string()
+            .email()
+            .required()
+            .messages({
+                'string.email': 'Please provide a valid email address.',
+                'any.required': 'Email is required.',
+            }),
+    });
+
+    return schema.validate(data);
+};
+
+// Validation schema for reset password
+const resetPasswordValidation = (data) => {
+    const schema = Joi.object({
+        token: Joi.string().required().messages({
+            'any.required': 'Reset token is required.',
+        }),
+        password: Joi.string()
+            .min(4)
+            .max(128)
+            .required()
+            .messages({
+                'string.min': 'Password must be at least 4 characters long.',
+                'string.max': 'Password must be less than 128 characters long.',
+                'any.required': 'Password is required.',
+            }),
+    });
+
+    return schema.validate(data);
+};
+
+module.exports = { signupValidation, loginValidation, forgotPasswordValidation, resetPasswordValidation };

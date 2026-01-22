@@ -661,6 +661,22 @@ body.auth-page-active::before {
   color: var(--text-tertiary);
 }
 
+.auth-form-footer {
+  margin-top: var(--space-2);
+  display: flex;
+  justify-content: center;
+  font-size: var(--text-xs);
+}
+
+.auth-form-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.auth-form-link:hover {
+  text-decoration: underline;
+}
+
 [data-theme="light"] .auth-footer {
   color: #666666;
 }

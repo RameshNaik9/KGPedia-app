@@ -42,6 +42,8 @@ export { conversationApi } from './services';
 export { 
   LandingPage as LandingPageV2,
   AuthPage as AuthPageV2,
+  ForgotPasswordPage as ForgotPasswordPageV2,
+  ResetPasswordPage as ResetPasswordPageV2,
   HomePage as HomePageV2,
   CareerAssistantPage as CareerAssistantPageV2,
   CareerAssistantWelcome as CareerAssistantWelcomeV2,

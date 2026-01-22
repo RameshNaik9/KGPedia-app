@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Icon from '../ui/Icon';
 
@@ -90,6 +90,11 @@ const LoginForm = () => {
         Login
         <span className="auth-submit-glow" />
       </button>
+      <div className="auth-form-footer">
+        <Link className="auth-form-link" to="/v2/auth/forgot-password">
+          Forgot password?
+        </Link>
+      </div>
     </form>
   );
 };
