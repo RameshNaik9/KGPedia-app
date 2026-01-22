@@ -20,24 +20,24 @@
 
 /* Ensure background is set immediately - no flicker */
 /* Colors use CSS variables - change in variables.css */
-body:has(.auth-page) {
+body.auth-page-active {
   background: var(--vanta-bg-dark) !important; /* Dark theme - matches Vanta.js backgroundColor */
   background-attachment: fixed;
   transition: background-color 0.3s ease;
 }
 
 /* Override the blue gradient from HomeComponent.css */
-body:has(.auth-page)::before {
+body.auth-page-active::before {
   display: none !important;
   content: none !important;
   background: none !important;
 }
 
-[data-theme="light"] body:has(.auth-page) {
+[data-theme="light"] body.auth-page-active {
   background: var(--vanta-bg-light) !important; /* Light theme - matches Vanta.js backgroundColor */
 }
 
-[data-theme="light"] body:has(.auth-page)::before {
+[data-theme="light"] body.auth-page-active::before {
   display: none !important;
   content: none !important;
   background: none !important;

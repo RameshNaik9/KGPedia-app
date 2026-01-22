@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Icon from '../components/ui/Icon';
@@ -26,7 +26,14 @@ const AuthPage = () => {
     rafId: null
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    document.body.classList.add('auth-page-active');
+    return () => {
+      document.body.classList.remove('auth-page-active');
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     // Set body background immediately to match Vanta.js (no delay, no black flash)
     // Use fallback values first, then update with CSS variables if available
     const isDark = theme === 'dark';
@@ -47,7 +54,7 @@ const AuthPage = () => {
       const style = document.createElement('style');
       style.id = 'auth-page-override';
       style.textContent = `
-        body:has(.auth-page)::before {
+        body.auth-page-active::before {
           display: none !important;
           content: none !important;
           background: none !important;
@@ -56,7 +63,22 @@ const AuthPage = () => {
       document.head.appendChild(style);
       overrideStyleRef.current = style;
     }
+  }, [theme]); // Update body background immediately when theme changes
 
+  useEffect(() => {
+    return () => {
+      // Remove override style
+      if (overrideStyleRef.current) {
+        overrideStyleRef.current.remove();
+        overrideStyleRef.current = null;
+      }
+      // Reset body background on unmount
+      document.body.style.backgroundColor = '';
+      document.body.style.transition = '';
+    };
+  }, []);
+
+  useEffect(() => {
     // Load Vanta.js scripts dynamically
     const loadVanta = async () => {
       // Check if scripts are already loaded
@@ -147,14 +169,6 @@ const AuthPage = () => {
         vantaEffect.current.destroy();
         vantaEffect.current = null;
       }
-      // Remove override style
-      if (overrideStyleRef.current) {
-        overrideStyleRef.current.remove();
-        overrideStyleRef.current = null;
-      }
-      // Reset body background on unmount
-      document.body.style.backgroundColor = '';
-      document.body.style.transition = '';
     };
   }, [theme]); // Re-initialize when theme changes
 
