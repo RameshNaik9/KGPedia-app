@@ -44,24 +44,33 @@ const ResetPasswordPage = () => {
     document.body.style.transition = 'background-color 0.1s ease';
 
     const backgroundColor = getVantaBackgroundColor(theme);
-    if (backgroundColor && backgroundColor !== fallbackBg) {
-      document.body.style.backgroundColor = backgroundColor;
+    const resolvedBg = backgroundColor || fallbackBg;
+    if (resolvedBg && resolvedBg !== fallbackBg) {
+      document.body.style.backgroundColor = resolvedBg;
     }
+
+    const overrideStyles = `
+      body.auth-page-active {
+        background: ${resolvedBg} !important;
+        background-attachment: fixed;
+      }
+      body::before {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+        filter: none !important;
+        opacity: 0 !important;
+      }
+    `;
 
     if (!overrideStyleRef.current) {
       const style = document.createElement('style');
       style.id = 'auth-page-override';
-      style.textContent = `
-        body::before {
-          display: none !important;
-          content: none !important;
-          background: none !important;
-          filter: none !important;
-          opacity: 0 !important;
-        }
-      `;
+      style.textContent = overrideStyles;
       document.head.appendChild(style);
       overrideStyleRef.current = style;
+    } else {
+      overrideStyleRef.current.textContent = overrideStyles;
     }
   }, [theme]);
 
@@ -109,7 +118,12 @@ const ResetPasswordPage = () => {
         vantaEffect.current.destroy();
       }
 
-      const { color, backgroundColor } = getVantaColors(theme);
+      const isDarkTheme = theme === 'dark';
+      const { color: darkColor, backgroundColor: darkBg } = getVantaColors('dark');
+      const lightVantaColor = 0x3f99ff;
+      const lightVantaBackground = 0xffffff;
+      const color = isDarkTheme ? darkColor : lightVantaColor;
+      const backgroundColor = isDarkTheme ? darkBg : lightVantaBackground;
 
       vantaEffect.current = window.VANTA.NET({
         el: vantaRef.current,
