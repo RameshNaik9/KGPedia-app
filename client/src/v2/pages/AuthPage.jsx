@@ -52,25 +52,34 @@ const AuthPage = () => {
     
     // Update with CSS variable value (if available)
     const backgroundColor = getVantaBackgroundColor(theme);
-    if (backgroundColor && backgroundColor !== fallbackBg) {
-      document.body.style.backgroundColor = backgroundColor;
+    const resolvedBg = backgroundColor || fallbackBg;
+    if (resolvedBg && resolvedBg !== fallbackBg) {
+      document.body.style.backgroundColor = resolvedBg;
     }
     
     // Remove any body::before pseudo-elements (from HomeComponent.css)
+    const overrideStyles = `
+      body.auth-page-active {
+        background: ${resolvedBg} !important;
+        background-attachment: fixed;
+      }
+      body::before {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+        filter: none !important;
+        opacity: 0 !important;
+      }
+    `;
+
     if (!overrideStyleRef.current) {
       const style = document.createElement('style');
       style.id = 'auth-page-override';
-      style.textContent = `
-        body::before {
-          display: none !important;
-          content: none !important;
-          background: none !important;
-          filter: none !important;
-          opacity: 0 !important;
-        }
-      `;
+      style.textContent = overrideStyles;
       document.head.appendChild(style);
       overrideStyleRef.current = style;
+    } else {
+      overrideStyleRef.current.textContent = overrideStyles;
     }
   }, [theme]); // Update body background immediately when theme changes
 
@@ -142,8 +151,13 @@ const AuthPage = () => {
         vantaEffect.current.destroy();
       }
 
-      // Get theme-based colors from CSS variables
-      const { color, backgroundColor } = getVantaColors(theme);
+      // Get theme-based colors from CSS variables (dark only)
+      const isDarkTheme = theme === 'dark';
+      const { color: darkColor, backgroundColor: darkBg } = getVantaColors('dark');
+      const lightVantaColor = 0x3f99ff;
+      const lightVantaBackground = 0xffffff;
+      const color = isDarkTheme ? darkColor : lightVantaColor;
+      const backgroundColor = isDarkTheme ? darkBg : lightVantaBackground;
 
       // Initialize Vanta.NET
       vantaEffect.current = window.VANTA.NET({
