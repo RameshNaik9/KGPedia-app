@@ -1,7 +1,7 @@
-const CACHE_NAME = "kgpedia-pwa-cache-v1";
+const CACHE_VERSION = "v2";
+const CACHE_NAME = `kgpedia-pwa-cache-${CACHE_VERSION}`;
 const urlsToCache = [
   "/",
-  "/index.html",
   "/manifest.json",
   "/icons/img2.png",
   "/icons/img1-icon.png",
@@ -18,13 +18,31 @@ self.addEventListener("install", (event) => {
             return cache.addAll(urlsToCache);
         })
     );
+    self.skipWaiting();
 });
 
 
 self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  const acceptsHtml = request.headers.get('accept')?.includes('text/html');
+  const isNavigate = request.mode === 'navigate';
+
+  if (isNavigate || acceptsHtml) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+    caches.match(request).then((response) => {
+      return response || fetch(request);
     })
   );
 });
@@ -44,6 +62,7 @@ self.addEventListener("activate", (event) => {
             );
         })
     );
+    self.clients.claim();
 });
 
 self.addEventListener('push', function(event) {
