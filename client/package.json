@@ -30,7 +30,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "REACT_APP_BUILD_VERSION=$(node -e \"process.stdout.write(new Date().toISOString())\") react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

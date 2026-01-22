@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import GroupChatPage from './pages/GroupChatPage';
-import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
 import CareerAssistantPage from './pages/CareerAssistantPage'; 
 import PrivateRoute from './PrivateRoute';
@@ -9,6 +8,7 @@ import PrivateRoute from './PrivateRoute';
 // V2 imports
 import { 
     V2LayoutWrapper,
+    LandingPageV2,
     AuthPageV2,
     ThemeProvider,
     HomePageV2,
@@ -28,11 +28,11 @@ function RoutesConfig() {
             <ThemeProvider>
                 <Routes>
                     {/* Public Routes */}
-                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/" element={<LandingPageV2 />} />
                     <Route path="/v2/auth" element={<AuthPageV2 />} />
                     {/* Legacy auth routes - redirect to unified auth */}
-                    <Route path="/v2/login" element={<Navigate to="/v2/auth" replace />} />
-                    <Route path="/v2/signup" element={<Navigate to="/v2/auth" replace />} />
+                    <Route path="/v2/login" element={<Navigate to="/v2/auth" replace state={{ mode: 'login' }} />} />
+                    <Route path="/v2/signup" element={<Navigate to="/v2/auth" replace state={{ mode: 'signup' }} />} />
 
                     {/* Protected Routes - V1 (Original) */}
                     <Route element={<PrivateRoute />}>

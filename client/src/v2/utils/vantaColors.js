@@ -16,14 +16,28 @@ const getCSSVariable = (variableName) => {
 };
 
 /**
- * Convert hex color (#ffffff) to Vanta.js format (0xffffff)
+ * Normalize CSS color to hex (#rrggbb)
  */
-const hexToVantaColor = (hex) => {
+const normalizeCssColorToHex = (value) => {
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (trimmed.startsWith('#')) return trimmed;
+
+  const rgbMatch = trimmed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+  if (!rgbMatch) return '';
+
+  const toHex = (num) => Number(num).toString(16).padStart(2, '0');
+  const [, r, g, b] = rgbMatch;
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+/**
+ * Convert CSS color to Vanta.js format (0xffffff)
+ */
+const cssColorToVanta = (value) => {
+  const hex = normalizeCssColorToHex(value);
   if (!hex) return 0x000000;
-  // Remove # if present
-  const cleanHex = hex.replace('#', '');
-  // Convert to integer
-  return parseInt(cleanHex, 16);
+  return parseInt(hex.slice(1), 16);
 };
 
 /**
@@ -34,17 +48,13 @@ const hexToVantaColor = (hex) => {
 export const getVantaColors = (theme) => {
   const isDark = theme === 'dark';
   
-  // Get CSS variable values with fallbacks
-  let colorHex = getCSSVariable(
-    isDark ? '--vanta-color-dark' : '--vanta-color-light'
-  );
-  let bgHex = getCSSVariable(
-    isDark ? '--vanta-bg-dark' : '--vanta-bg-light'
-  );
+  // Use dark line color in both themes, but keep theme-specific background
+  let colorHex = getCSSVariable('--vanta-color-dark');
+  let bgHex = getCSSVariable(isDark ? '--vanta-bg-dark' : '--vanta-bg-light');
   
   // Fallbacks if CSS variables not available yet
   if (!colorHex) {
-    colorHex = isDark ? '#3f99ff' : '#6366f1';
+    colorHex = '#3f99ff';
   }
   if (!bgHex) {
     bgHex = isDark ? '#241d3c' : '#ffffff';
@@ -52,8 +62,8 @@ export const getVantaColors = (theme) => {
   
   // Convert to Vanta.js format
   return {
-    color: hexToVantaColor(colorHex),
-    backgroundColor: hexToVantaColor(bgHex),
+    color: cssColorToVanta(colorHex),
+    backgroundColor: cssColorToVanta(bgHex),
   };
 };
 
@@ -75,7 +85,7 @@ export const getVantaBackgroundColor = (theme) => {
     bgHex = isDark ? '#241d3c' : '#ffffff';
   }
   
-  // Ensure it starts with #
-  return bgHex.startsWith('#') ? bgHex : `#${bgHex}`;
+  const normalized = normalizeCssColorToHex(bgHex);
+  return normalized || bgHex;
 };
 
