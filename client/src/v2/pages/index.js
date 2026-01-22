@@ -5,6 +5,9 @@
 // Home
 export { default as HomePage } from './HomePage';
 
+// Auth
+export { default as AuthPage } from './AuthPage';
+
 // Career Assistant
 export { default as CareerAssistantPage } from './CareerAssistantPage';
 export { default as CareerAssistantWelcome } from './CareerAssistantWelcome';

@@ -138,6 +138,13 @@
   --header-height: 56px;
   --input-height: 48px;
   --layout-padding: 12px;
+  
+  /* ========== Vanta.js Background Colors ========== */
+  /* These colors are used for the animated background on auth pages */
+  --vanta-color-dark: #3f99ff;        /* Network line color for dark theme */
+  --vanta-bg-dark: #241d3c;           /* Background color for dark theme */
+  --vanta-color-light: #6366f1;       /* Network line color for light theme */
+  --vanta-bg-light: #ffffff;          /* Background color for light theme */
 }
 
 /* ==========================================================================
