@@ -98,6 +98,8 @@ npm install
 # PORT=8080
 # MONGODB_URI=your-mongodb-connection-string
 # JWT_SECRET=your-secret-key
+# PUBLIC_VAPID_KEY=your-public-key
+# PRIVATE_VAPID_KEY=your-private-key
 
 npm start
 # Runs on http://localhost:8080
@@ -166,8 +168,12 @@ NODE_ENV=production
 PORT=8080
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/kgpedia
 JWT_SECRET=your-super-secret-jwt-key
+PUBLIC_VAPID_KEY=your-public-vapid-key
+PRIVATE_VAPID_KEY=your-private-vapid-key
 WEBSITE_NODE_DEFAULT_VERSION=20-lts
 ```
+
+**Generate VAPID keys:** Run `cd server && npx web-push generate-vapid-keys`
 
 See `server/.env.example` for local development template.
 
