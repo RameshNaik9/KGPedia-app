@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import { toastError, toastSuccess, toastWarn } from '../utils/toast';
@@ -14,11 +14,13 @@ const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [redirectSeconds, setRedirectSeconds] = useState(10);
   const [vantaLoaded, setVantaLoaded] = useState(false);
   const overrideStyleRef = useRef(null);
   const authPageRef = useRef(null);
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
+  const navigate = useNavigate();
   const cursorStateRef = useRef({
     x: 0,
     y: 0,
@@ -205,6 +207,25 @@ const ForgotPasswordPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isSubmitted) return undefined;
+
+    const intervalId = setInterval(() => {
+      setRedirectSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalId);
+          navigate('/v2/auth', { replace: true, state: { mode: 'login' } });
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isSubmitted, navigate]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!email.trim()) {
@@ -216,6 +237,7 @@ const ForgotPasswordPage = () => {
     try {
       await axios.post(`${apiBaseUrl}/api/auth/forgot-password`, { email });
       setIsSubmitted(true);
+      setRedirectSeconds(10);
       toastSuccess('If an account exists, we sent a reset link.');
     } catch (error) {
       console.error('Forgot password failed:', error.message);
@@ -242,8 +264,11 @@ const ForgotPasswordPage = () => {
 
         {isSubmitted ? (
           <div className="auth-form">
-            <p className="auth-helper-text" style={{ color: 'inherit' }}>
+            <p className="auth-helper-text auth-helper-text--large" style={{ color: 'inherit' }}>
               Check your email for the reset link. It expires in 15 minutes.
+            </p>
+            <p className="auth-helper-text auth-helper-text--large" style={{ color: 'inherit' }}>
+              Redirecting to login in {redirectSeconds}s
             </p>
           </div>
         ) : (
@@ -278,7 +303,7 @@ const ForgotPasswordPage = () => {
         toastClassName="Toastify__toast--custom"
         bodyClassName="Toastify__toast-body--custom"
         position="top-right"
-        closeButton={false}
+        closeButton
       />
     </div>
   );

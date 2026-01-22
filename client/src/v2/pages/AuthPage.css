@@ -617,6 +617,11 @@ body.auth-page-active::before {
   color: var(--error);
 }
 
+.auth-helper-text--large {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
 .auth-submit {
   position: relative;
   margin-top: var(--space-2);
