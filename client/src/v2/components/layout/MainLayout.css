@@ -1,5 +1,15 @@
 /* ==========================================================================
-   MainLayout Styles - Clean approach with NO gap, using margins
+   MainLayout Styles - Robust layout for all browsers and zoom levels
+   
+   Structure:
+   - 12px padding from screen edges on all 4 sides
+   - 12px gap between panels (using margins, NOT flex gap)
+   - Left panel: fixed width (72px or 240px expanded)
+   - Right panel: percentage-based (22% default, 250px min, 35% max)
+   - Middle: fills ALL remaining space
+   
+   IMPORTANT: We use margins for spacing, NOT gap, because gap still applies
+   to zero-width elements and causes unwanted spacing when panels are hidden.
    ========================================================================== */
 
 .main-layout {
@@ -10,9 +20,11 @@
   width: 100%;
   background-color: var(--bg-primary);
   overflow: hidden;
+  /* 12px padding from screen edges */
   padding: var(--layout-padding);
-  /* NO gap - using margins for spacing */
+  /* NO gap - we use margins instead */
   gap: 0;
+  box-sizing: border-box;
   transition: background-color var(--transition-slow);
 }
 
@@ -21,7 +33,7 @@
    ========================================================================== */
 
 .main-content {
-  flex: 1 1 auto;
+  flex: 1 1 0%;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -41,11 +53,12 @@
   border-radius: var(--radius-2xl);
   transition: 
     background-color var(--transition-slow),
-    box-shadow var(--transition-slow);
+    box-shadow var(--transition-slow),
+    border-radius var(--transition-web3);
 }
 
 /* ==========================================================================
-   Left Sidebar - Uses margin-right for spacing
+   Left Sidebar - Fixed pixel width, uses margin-right for spacing
    ========================================================================== */
 
 .main-layout .left-sidebar {
@@ -54,13 +67,16 @@
   box-shadow: var(--shadow-card);
   background-color: var(--surface-primary);
   flex-shrink: 0;
+  flex-grow: 0;
   width: var(--sidebar-width);
   height: 100%;
+  /* Spacing to middle content */
   margin-right: var(--layout-padding);
   overflow: hidden;
+  box-sizing: border-box;
   transition: 
     width var(--transition-web3),
-    margin var(--transition-web3),
+    margin-right var(--transition-web3),
     opacity var(--transition-web3),
     transform var(--transition-web3),
     background-color var(--transition-slow);
@@ -71,32 +87,45 @@
 }
 
 /* ==========================================================================
-   Right Panel - Uses margin-left for spacing
+   Right Panel - Width controlled by inline style, uses margin-left for spacing
    ========================================================================== */
 
 .main-layout .right-panel {
-  width: var(--right-panel-width);
+  /* Width is set via inline style for dynamic resizing */
   height: 100%;
   border-radius: var(--radius-2xl);
   background-color: var(--surface-primary);
   box-shadow: var(--shadow-card);
   flex-shrink: 0;
+  flex-grow: 0;
+  /* Spacing from middle content */
   margin-left: var(--layout-padding);
   overflow: hidden;
+  box-sizing: border-box;
   transition: 
     width var(--transition-web3),
-    margin var(--transition-web3),
+    margin-left var(--transition-web3),
+    opacity var(--transition-web3),
+    transform var(--transition-web3),
+    background-color var(--transition-slow);
+}
+
+/* Disable width transition while resizing for smooth dragging */
+.main-layout .right-panel.is-resizing {
+  transition: 
+    margin-left var(--transition-web3),
     opacity var(--transition-web3),
     transform var(--transition-web3),
     background-color var(--transition-slow);
 }
 
 /* ==========================================================================
-   Left Hidden - Completely removed, no space taken
+   Left Hidden - Completely collapsed, no margin
    ========================================================================== */
 
 .left-hidden .left-sidebar {
-  width: 0;
+  width: 0 !important;
+  min-width: 0;
   margin-right: 0;
   opacity: 0;
   overflow: hidden;
@@ -104,11 +133,12 @@
 }
 
 /* ==========================================================================
-   Right Hidden - Completely removed, no space taken
+   Right Hidden - Completely collapsed, no margin
    ========================================================================== */
 
 .right-hidden .right-panel {
-  width: 0;
+  width: 0 !important;
+  min-width: 0;
   margin-left: 0;
   opacity: 0;
   overflow: hidden;
@@ -116,32 +146,12 @@
 }
 
 /* ==========================================================================
-   Right Hidden - Remove right padding so content extends to edge
+   Focus Mode - Both hidden, content fills screen (with padding for rounded corners)
    ========================================================================== */
-
-.right-hidden {
-  padding-right: 0;
-}
-
-/* ==========================================================================
-   Left Hidden - Remove left padding so content extends to edge
-   ========================================================================== */
-
-.left-hidden {
-  padding-left: 0;
-}
-
-/* ==========================================================================
-   Focus Mode - Both hidden, no left/right padding
-   ========================================================================== */
-
-.is-focus-mode {
-  padding-left: 0;
-  padding-right: 0;
-}
 
 .is-focus-mode .left-sidebar {
-  width: 0;
+  width: 0 !important;
+  min-width: 0;
   margin-right: 0;
   opacity: 0;
   overflow: hidden;
@@ -149,30 +159,32 @@
 }
 
 .is-focus-mode .right-panel {
-  width: 0;
+  width: 0 !important;
+  min-width: 0;
   margin-left: 0;
   opacity: 0;
   overflow: hidden;
   pointer-events: none;
 }
 
+/* In focus mode, keep rounded corners */
+.is-focus-mode .main-content__inner {
+  border-radius: var(--radius-2xl);
+}
+
 /* ==========================================================================
-   Responsive
+   Responsive - Laptops (> 1024px)
    ========================================================================== */
 
 @media (max-width: 1200px) {
   .main-layout {
     --layout-padding: 10px;
   }
-
-  .main-layout .right-panel {
-    width: 260px;
-  }
-  
-  .right-hidden .right-panel {
-    width: 0;
-  }
 }
+
+/* ==========================================================================
+   Responsive - Tablets (≤ 1024px) - Right panel becomes overlay
+   ========================================================================== */
 
 @media (max-width: 1024px) {
   .main-layout .right-panel {
@@ -182,16 +194,21 @@
     bottom: var(--layout-padding);
     height: auto;
     z-index: var(--z-fixed);
-    width: var(--right-panel-width);
+    /* Fixed width for tablet overlay */
+    width: 300px !important;
     margin-left: 0;
   }
 
   .right-hidden .right-panel {
     transform: translateX(calc(100% + var(--layout-padding)));
-    width: var(--right-panel-width);
     opacity: 0;
+    width: 300px !important;
   }
 }
+
+/* ==========================================================================
+   Responsive - Mobile (≤ 768px) - Both panels become overlays
+   ========================================================================== */
 
 @media (max-width: 768px) {
   .main-layout {
@@ -206,13 +223,13 @@
     height: auto;
     z-index: var(--z-fixed);
     border-radius: 0;
-    width: var(--sidebar-width-expanded);
+    width: var(--sidebar-width-expanded) !important;
     margin-right: 0;
   }
 
   .left-hidden .left-sidebar {
     transform: translateX(-100%);
-    width: var(--sidebar-width-expanded);
+    width: var(--sidebar-width-expanded) !important;
     opacity: 0;
   }
 
@@ -234,13 +251,13 @@
   }
   
   .main-layout .right-panel {
-    width: 100%;
+    width: 100% !important;
     max-width: 320px;
   }
 }
 
 /* ==========================================================================
-   Overlay for mobile/tablet
+   Overlay for mobile/tablet when panels are open
    ========================================================================== */
 
 .main-layout::before {

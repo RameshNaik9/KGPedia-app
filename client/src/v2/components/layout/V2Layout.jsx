@@ -12,7 +12,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import LeftSidebar from './LeftSidebar';
 import RightPanel from './RightPanel';
 import { useLayout } from '../../context/LayoutContext';
-import './MainLayout.css';
+// import './MainLayout.css';  // OLD - keeping for backup
+import './MainLayoutNew.css';  // NEW - fresh CSS with hardcoded values
 
 // Map URL paths to assistant types
 const getAssistantTypeFromPath = (pathname) => {
