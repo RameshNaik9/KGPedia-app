@@ -7,6 +7,11 @@
  * - EXPAND_RIGHT: Left sidebar hidden, content expands left  
  * - FOCUS: Both sidebars hidden, full content focus
  * 
+ * Responsive Behavior:
+ * - Desktop (>1024px): All panels visible, standard layout
+ * - Tablet (768-1024px): Left visible, right as overlay
+ * - Mobile (<768px): Both panels as overlay, hidden by default
+ * 
  * Special:
  * - IMMERSIVE: Browser native fullscreen (Cmd/Ctrl + middle button)
  * - Cmd/Ctrl + left/right button: Toggle visibility completely
@@ -24,12 +29,34 @@ export const LAYOUT_MODES = {
   FOCUS: 'focus',                 // Both hidden
 };
 
+// Breakpoints
+const BREAKPOINTS = {
+  MOBILE: 768,
+  TABLET: 1024,
+};
+
+// Device types
+export const DEVICE_TYPES = {
+  MOBILE: 'mobile',
+  TABLET: 'tablet',
+  DESKTOP: 'desktop',
+};
+
 // Right panel width constraints
 // Default: 22% of viewport, Min: 250px, Max: 35% of viewport
 const RIGHT_PANEL_DEFAULT_PERCENT = 22; // 22%
 const RIGHT_PANEL_MIN_WIDTH = 250; // 250px minimum
 const RIGHT_PANEL_MAX_PERCENT = 35; // 35% maximum
 const RIGHT_PANEL_STORAGE_KEY = 'kgpedia-right-panel-width';
+
+// Helper to detect device type
+const getDeviceType = () => {
+  if (typeof window === 'undefined') return DEVICE_TYPES.DESKTOP;
+  const width = window.innerWidth;
+  if (width < BREAKPOINTS.MOBILE) return DEVICE_TYPES.MOBILE;
+  if (width < BREAKPOINTS.TABLET) return DEVICE_TYPES.TABLET;
+  return DEVICE_TYPES.DESKTOP;
+};
 
 // Helper to calculate initial width based on viewport
 const getInitialRightPanelWidth = () => {
@@ -42,13 +69,51 @@ const getInitialRightPanelWidth = () => {
 };
 
 export const LayoutProvider = ({ children }) => {
-  // Sidebar states
+  // Device type detection
+  const [deviceType, setDeviceType] = useState(getDeviceType);
+  const isMobile = deviceType === DEVICE_TYPES.MOBILE;
+  const isTablet = deviceType === DEVICE_TYPES.TABLET;
+  const isDesktop = deviceType === DEVICE_TYPES.DESKTOP;
+
+  // Sidebar states - responsive defaults
   const [isLeftSidebarExpanded, setIsLeftSidebarExpanded] = useState(false);
-  const [isLeftSidebarVisible, setIsLeftSidebarVisible] = useState(true);
-  const [isRightPanelVisible, setIsRightPanelVisible] = useState(true);
+  const [isLeftSidebarVisible, setIsLeftSidebarVisible] = useState(() => {
+    // Mobile: hidden by default, Tablet/Desktop: visible
+    return getDeviceType() !== DEVICE_TYPES.MOBILE;
+  });
+  const [isRightPanelVisible, setIsRightPanelVisible] = useState(() => {
+    // Mobile/Tablet: hidden by default, Desktop: visible
+    return getDeviceType() === DEVICE_TYPES.DESKTOP;
+  });
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [isImmersiveMode, setIsImmersiveMode] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // Update device type on resize
+  useEffect(() => {
+    const handleResize = () => {
+      const newDeviceType = getDeviceType();
+      setDeviceType(prevType => {
+        if (prevType !== newDeviceType) {
+          // Reset visibility based on new device type
+          if (newDeviceType === DEVICE_TYPES.MOBILE) {
+            setIsLeftSidebarVisible(false);
+            setIsRightPanelVisible(false);
+          } else if (newDeviceType === DEVICE_TYPES.TABLET) {
+            setIsLeftSidebarVisible(true);
+            setIsRightPanelVisible(false);
+          } else {
+            setIsLeftSidebarVisible(true);
+            setIsRightPanelVisible(true);
+          }
+        }
+        return newDeviceType;
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Right panel resizable width - load from localStorage or calculate from viewport
   const [rightPanelWidth, setRightPanelWidth] = useState(() => {
@@ -277,6 +342,79 @@ export const LayoutProvider = ({ children }) => {
     }
   }, [startAnimation]);
 
+  // Close all panels (for backdrop click on mobile/tablet)
+  const closeAllPanels = useCallback(() => {
+    startAnimation();
+    if (isMobile) {
+      setIsLeftSidebarVisible(false);
+      setIsLeftSidebarExpanded(false);
+      setIsRightPanelVisible(false);
+    } else if (isTablet) {
+      setIsRightPanelVisible(false);
+    }
+  }, [isMobile, isTablet, startAnimation]);
+
+  // Open/expand left sidebar (for swipe gesture - two-stage on mobile)
+  // Stage 1: If hidden -> show minimal (not expanded)
+  // Stage 2: If visible but not expanded -> expand to full
+  const openLeftSidebar = useCallback(() => {
+    startAnimation();
+    
+    if (isMobile) {
+      // Close right panel when interacting with left
+      setIsRightPanelVisible(false);
+      
+      if (!isLeftSidebarVisible) {
+        // Stage 1: Show in minimal mode
+        setIsLeftSidebarVisible(true);
+        setIsLeftSidebarExpanded(false);
+      } else if (!isLeftSidebarExpanded) {
+        // Stage 2: Expand to full
+        setIsLeftSidebarExpanded(true);
+      }
+    } else {
+      // Desktop/Tablet: just show
+      setIsLeftSidebarVisible(true);
+    }
+  }, [isMobile, isLeftSidebarVisible, isLeftSidebarExpanded, startAnimation]);
+
+  // Open right panel (for swipe gesture)
+  const openRightPanel = useCallback(() => {
+    startAnimation();
+    setIsRightPanelVisible(true);
+    // On mobile, close left sidebar when opening right
+    if (isMobile) {
+      setIsLeftSidebarVisible(false);
+      setIsLeftSidebarExpanded(false);
+    }
+  }, [isMobile, startAnimation]);
+
+  // Close/collapse left sidebar (for swipe gesture - two-stage on mobile)
+  // Stage 1: If expanded -> collapse to minimal
+  // Stage 2: If minimal -> hide completely
+  const closeLeftSidebar = useCallback(() => {
+    startAnimation();
+    
+    if (isMobile) {
+      if (isLeftSidebarExpanded) {
+        // Stage 1: Collapse to minimal
+        setIsLeftSidebarExpanded(false);
+      } else {
+        // Stage 2: Hide completely
+        setIsLeftSidebarVisible(false);
+      }
+    } else {
+      // Desktop/Tablet: just hide
+      setIsLeftSidebarVisible(false);
+    }
+  }, [isMobile, isLeftSidebarExpanded, startAnimation]);
+
+  // Close right panel
+  const closeRightPanel = useCallback(() => {
+    startAnimation();
+    setIsRightPanelVisible(false);
+  }, [startAnimation]);
+
   const value = {
     // States
     isLeftSidebarExpanded,
@@ -286,6 +424,12 @@ export const LayoutProvider = ({ children }) => {
     isImmersiveMode,
     isAnimating,
     layoutMode,
+    
+    // Device type
+    deviceType,
+    isMobile,
+    isTablet,
+    isDesktop,
     
     // Right panel resize states
     rightPanelWidth,
@@ -302,6 +446,13 @@ export const LayoutProvider = ({ children }) => {
     setIsLeftSidebarExpanded,
     setIsLeftSidebarVisible,
     setIsRightPanelVisible,
+    
+    // Mobile/Tablet specific actions
+    closeAllPanels,
+    openLeftSidebar,
+    openRightPanel,
+    closeLeftSidebar,
+    closeRightPanel,
     
     // Right panel resize actions
     startResizingRightPanel,

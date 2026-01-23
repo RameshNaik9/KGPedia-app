@@ -10,14 +10,20 @@
  * - Expand Right: Left hidden, content expands left
  * - Focus Mode: Both hidden, full content
  * 
+ * Responsive:
+ * - Desktop (>1024px): All panels visible
+ * - Tablet (768-1024px): Left visible, right as swipeable overlay
+ * - Mobile (<768px): Both panels as swipeable overlays
+ * 
  * Uses React Router's Outlet to render child routes.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import LeftSidebar from './LeftSidebar';
 import RightPanel from './RightPanel';
 import { useLayout } from '../../context/LayoutContext';
+import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import './MainLayout.css';
 
 // Map URL paths to assistant types
@@ -36,7 +42,16 @@ const MainLayout = () => {
     isLeftSidebarVisible, 
     isRightPanelVisible,
     isLeftSidebarExpanded,
-    isFocusMode
+    isFocusMode,
+    // Device type (used for swipe gestures and classes)
+    isMobile,
+    isTablet,
+    // Mobile/Tablet actions
+    closeAllPanels,
+    openLeftSidebar,
+    openRightPanel,
+    closeLeftSidebar,
+    closeRightPanel,
   } = useLayout();
 
   // Determine current assistant type from URL
@@ -52,11 +67,40 @@ const MainLayout = () => {
     if (!isRightPanelVisible) classes.push('right-hidden');
     if (isLeftSidebarExpanded) classes.push('left-expanded');
     if (isFocusMode) classes.push('is-focus-mode');
+    if (isMobile) classes.push('is-mobile');
+    if (isTablet) classes.push('is-tablet');
     return classes.join(' ');
-  }, [layoutMode, isLeftSidebarVisible, isRightPanelVisible, isLeftSidebarExpanded, isFocusMode]);
+  }, [layoutMode, isLeftSidebarVisible, isRightPanelVisible, isLeftSidebarExpanded, isFocusMode, isMobile, isTablet]);
+
+  // Handle backdrop click (close panels on mobile/tablet)
+  const handleBackdropClick = useCallback(() => {
+    closeAllPanels();
+  }, [closeAllPanels]);
+
+  // Setup swipe gestures for mobile/tablet
+  useSwipeGesture({
+    onSwipeRightFromLeft: openLeftSidebar,
+    onSwipeLeftFromRight: openRightPanel,
+    onSwipeLeft: closeLeftSidebar,
+    onSwipeRight: closeRightPanel,
+    isLeftOpen: isLeftSidebarVisible,
+    isRightOpen: isRightPanelVisible,
+    enabled: isMobile || isTablet,
+  });
 
   return (
     <div className={layoutClasses}>
+      {/* Backdrop overlay for mobile/tablet - click to close panels */}
+      <div 
+        className="layout-backdrop" 
+        onClick={handleBackdropClick}
+        aria-hidden="true"
+      />
+
+      {/* Swipe hint indicators for mobile */}
+      <div className="swipe-hint swipe-hint--left" aria-hidden="true" />
+      <div className="swipe-hint swipe-hint--right" aria-hidden="true" />
+
       {/* Left Sidebar - Static, never re-mounts */}
       <LeftSidebar />
 

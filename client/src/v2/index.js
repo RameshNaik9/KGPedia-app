@@ -13,9 +13,13 @@ export {
   LayoutProvider, 
   useLayout, 
   LAYOUT_MODES,
+  DEVICE_TYPES,
   ConversationsProvider,
   useConversations
 } from './context';
+
+// Hooks
+export { useSwipeGesture } from './hooks';
 
 // Layout Components
 export { MainLayout, LeftSidebar, RightPanel, LayoutControls } from './components/layout';
