@@ -1,77 +1,77 @@
-// /**
-//  * MainLayout - Primary layout wrapper
-//  * 
-//  * Modes:
-//  * - Standard View: Both sidebars visible
-//  * - Expand Left: Right hidden, content expands right
-//  * - Expand Right: Left hidden, content expands left
-//  * - Focus Mode: Both hidden, full content
-//  */
+/**
+ * MainLayout - Primary layout wrapper for all pages
+ * 
+ * This component stays mounted across route changes, preventing
+ * sidebar flickering and maintaining smooth transitions.
+ * 
+ * Modes:
+ * - Standard View: Both sidebars visible
+ * - Expand Left: Right hidden, content expands right
+ * - Expand Right: Left hidden, content expands left
+ * - Focus Mode: Both hidden, full content
+ * 
+ * Uses React Router's Outlet to render child routes.
+ */
 
-// import React from 'react';
-// import LeftSidebar from './LeftSidebar';
-// import RightPanel from './RightPanel';
-// import { useLayout, LAYOUT_MODES } from '../../context/LayoutContext';
-// // import './MainLayout.css';  // Disabled - using MainLayoutNew.css via V2Layout instead
+import React, { useMemo } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import LeftSidebar from './LeftSidebar';
+import RightPanel from './RightPanel';
+import { useLayout } from '../../context/LayoutContext';
+import './MainLayout.css';
 
-// const MainLayout = ({ 
-//   children,
-//   showRightPanel = true,
-//   conversations = [],
-//   collections = [],
-//   activeConversationId,
-//   onConversationSelect,
-//   onCollectionSelect,
-//   onNewChat
-// }) => {
-//   const { 
-//     layoutMode, 
-//     isLeftSidebarVisible, 
-//     isRightPanelVisible,
-//     isLeftSidebarExpanded,
-//     isFocusMode
-//   } = useLayout();
+// Map URL paths to assistant types
+const getAssistantTypeFromPath = (pathname) => {
+  if (pathname.includes('/career-assistant')) return 'Career';
+  if (pathname.includes('/academics-assistant')) return 'Academics';
+  if (pathname.includes('/gymkhana-assistant')) return 'Gymkhana';
+  if (pathname.includes('/bhaat-assistant')) return 'Bhaat';
+  return null; // Home or other pages show all
+};
 
-//   // Generate layout class names
-//   const getLayoutClasses = () => {
-//     const classes = ['main-layout'];
-    
-//     // Layout mode
-//     classes.push(`layout-mode--${layoutMode}`);
-    
-//     // State classes
-//     if (!isLeftSidebarVisible) classes.push('left-hidden');
-//     if (!isRightPanelVisible) classes.push('right-hidden');
-//     if (isLeftSidebarExpanded) classes.push('left-expanded');
-//     if (isFocusMode) classes.push('is-focus-mode');
-    
-//     return classes.join(' ');
-//   };
+const MainLayout = () => {
+  const location = useLocation();
+  const { 
+    layoutMode, 
+    isLeftSidebarVisible, 
+    isRightPanelVisible,
+    isLeftSidebarExpanded,
+    isFocusMode
+  } = useLayout();
 
-//   return (
-//     <div className={getLayoutClasses()}>
-//       {/* Left Sidebar - Always in DOM for smooth animations */}
-//       <LeftSidebar onNewChat={onNewChat} />
+  // Determine current assistant type from URL
+  const currentAssistantType = useMemo(() => {
+    return getAssistantTypeFromPath(location.pathname);
+  }, [location.pathname]);
 
-//       {/* Main Content Area */}
-//       <main className="main-content">
-//         <div className="main-content__inner">
-//           {children}
-//         </div>
-//       </main>
+  // Generate layout class names
+  const layoutClasses = useMemo(() => {
+    const classes = ['main-layout'];
+    classes.push(`layout-mode--${layoutMode}`);
+    if (!isLeftSidebarVisible) classes.push('left-hidden');
+    if (!isRightPanelVisible) classes.push('right-hidden');
+    if (isLeftSidebarExpanded) classes.push('left-expanded');
+    if (isFocusMode) classes.push('is-focus-mode');
+    return classes.join(' ');
+  }, [layoutMode, isLeftSidebarVisible, isRightPanelVisible, isLeftSidebarExpanded, isFocusMode]);
 
-//       {/* Right Panel - Always in DOM for smooth animations */}
-//       {showRightPanel && (
-//         <RightPanel
-//           conversations={conversations}
-//           collections={collections}
-//           activeConversationId={activeConversationId}
-//           onConversationSelect={onConversationSelect}
-//           onCollectionSelect={onCollectionSelect}
-//         />
-//       )}
-//     </div>
-//   );
-// };
+  return (
+    <div className={layoutClasses}>
+      {/* Left Sidebar - Static, never re-mounts */}
+      <LeftSidebar />
 
-// export default MainLayout;
+      {/* Main Content Area - Only this part changes on navigation */}
+      <main className="main-content">
+        <div className="main-content__inner">
+          <Outlet />
+        </div>
+      </main>
+
+      {/* Right Panel - Static, filters conversations by assistant type */}
+      <RightPanel currentAssistantType={currentAssistantType} />
+    </div>
+  );
+};
+
+export default MainLayout;
+

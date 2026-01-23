@@ -1,253 +1,338 @@
 /* ==========================================================================
-   MainLayout Styles - Robust layout for all browsers and zoom levels
+   MainLayout.css - Primary layout styles
    
-   Structure:
-   - 12px padding from screen edges on all 4 sides
-   - 12px gap between panels (using margins, NOT flex gap)
-   - Left panel: fixed width (72px or 240px expanded)
-   - Right panel: percentage-based (22% default, 250px min, 35% max)
-   - Middle: fills ALL remaining space
+   Three-column layout: Left Sidebar | Main Content | Right Panel
    
-   IMPORTANT: We use margins for spacing, NOT gap, because gap still applies
-   to zero-width elements and causes unwanted spacing when panels are hidden.
+   Layout Features:
+   - 12px padding from screen edges
+   - 12px spacing between panels
+   - Left sidebar: 72px (collapsed) / 240px (expanded)
+   - Right panel: 22% default (min 250px, max 35%)
+   - Middle content: fills remaining space
+   - Focus mode: both panels hidden, content fills screen
    ========================================================================== */
 
-.main-layout {
-  display: flex;
-  position: relative;
-  min-height: 100vh;
-  height: 100vh;
-  width: 100%;
+/* ==========================================================================
+   GLOBAL RESETS - Ensure body/html don't interfere
+   ========================================================================== */
+
+html, body, #root, .v2-app {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.v2-app {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+}
+
+/* ==========================================================================
+   BOX SIZING RESET
+   ========================================================================== */
+
+.main-layout,
+.main-layout *,
+.main-layout *::before,
+.main-layout *::after {
+  box-sizing: border-box !important;
+}
+
+/* ==========================================================================
+   MAIN LAYOUT CONTAINER
+   - Takes full viewport width and height
+   - 12px padding from screen edges
+   - Flexbox row layout
+   ========================================================================== */
+
+.main-layout,
+.v2-app .main-layout,
+div.main-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  position: relative !important;
+  /* Use 100% instead of 100vw to avoid scrollbar width issues */
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  padding: 12px !important;
+  gap: 0 !important;
+  overflow: hidden !important;
   background-color: var(--bg-primary);
-  overflow: hidden;
-  /* 12px padding from screen edges */
-  padding: var(--layout-padding);
-  /* NO gap - we use margins instead */
-  gap: 0;
-  box-sizing: border-box;
-  transition: background-color var(--transition-slow);
 }
 
 /* ==========================================================================
-   Main Content - Fills ALL remaining space
+   LEFT SIDEBAR
+   - Fixed width: 72px (collapsed) or 240px (expanded)
+   - 12px margin-right for spacing to middle content
    ========================================================================== */
 
-.main-content {
-  flex: 1 1 0%;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  height: 100%;
-  overflow: hidden;
+.main-layout .left-sidebar,
+.main-layout aside.left-sidebar,
+.v2-app .main-layout .left-sidebar {
+  position: relative !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+  width: 72px !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  margin: 0 12px 0 0 !important;
+  padding: 8px !important;
+  border-radius: 20px !important;
+  background-color: var(--surface-primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              margin 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-.main-content__inner {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: var(--surface-primary);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-  border-radius: var(--radius-2xl);
-  transition: 
-    background-color var(--transition-slow),
-    box-shadow var(--transition-slow),
-    border-radius var(--transition-web3);
+/* Left sidebar expanded */
+.main-layout.left-expanded .left-sidebar,
+.main-layout.left-expanded aside.left-sidebar {
+  width: 240px !important;
 }
 
-/* ==========================================================================
-   Left Sidebar - Fixed pixel width, uses margin-right for spacing
-   ========================================================================== */
-
-.main-layout .left-sidebar {
-  border-radius: var(--radius-2xl);
-  border: none;
-  box-shadow: var(--shadow-card);
-  background-color: var(--surface-primary);
-  flex-shrink: 0;
-  flex-grow: 0;
-  width: var(--sidebar-width);
-  height: 100%;
-  /* Spacing to middle content */
-  margin-right: var(--layout-padding);
-  overflow: hidden;
-  box-sizing: border-box;
-  transition: 
-    width var(--transition-web3),
-    margin-right var(--transition-web3),
-    opacity var(--transition-web3),
-    transform var(--transition-web3),
-    background-color var(--transition-slow);
-}
-
-.left-expanded .left-sidebar {
-  width: var(--sidebar-width-expanded);
-}
-
-/* ==========================================================================
-   Right Panel - Width controlled by inline style, uses margin-left for spacing
-   ========================================================================== */
-
-.main-layout .right-panel {
-  /* Width is set via inline style for dynamic resizing */
-  height: 100%;
-  border-radius: var(--radius-2xl);
-  background-color: var(--surface-primary);
-  box-shadow: var(--shadow-card);
-  flex-shrink: 0;
-  flex-grow: 0;
-  /* Spacing from middle content */
-  margin-left: var(--layout-padding);
-  overflow: hidden;
-  box-sizing: border-box;
-  transition: 
-    width var(--transition-web3),
-    margin-left var(--transition-web3),
-    opacity var(--transition-web3),
-    transform var(--transition-web3),
-    background-color var(--transition-slow);
-}
-
-/* Disable width transition while resizing for smooth dragging */
-.main-layout .right-panel.is-resizing {
-  transition: 
-    margin-left var(--transition-web3),
-    opacity var(--transition-web3),
-    transform var(--transition-web3),
-    background-color var(--transition-slow);
-}
-
-/* ==========================================================================
-   Left Hidden - Completely collapsed, no margin
-   ========================================================================== */
-
-.left-hidden .left-sidebar {
+/* Left sidebar hidden */
+.main-layout.left-hidden .left-sidebar,
+.main-layout.left-hidden aside.left-sidebar {
   width: 0 !important;
-  min-width: 0;
-  margin-right: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
 
 /* ==========================================================================
-   Right Hidden - Completely collapsed, no margin
+   MAIN CONTENT (MIDDLE)
+   - Fills ALL remaining space
+   - flex: 1 1 0% ensures it grows to fill
+   - No max-width constraints
    ========================================================================== */
 
-.right-hidden .right-panel {
-  width: 0 !important;
-  min-width: 0;
-  margin-left: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
+.main-layout .main-content,
+.main-layout main.main-content,
+.v2-app .main-layout .main-content {
+  flex: 1 1 0% !important;
+  flex-grow: 1 !important;
+  flex-shrink: 1 !important;
+  flex-basis: 0% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  width: auto !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.main-layout .main-content__inner,
+.v2-app .main-layout .main-content__inner {
+  flex: 1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: var(--surface-primary) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* ==========================================================================
-   Focus Mode - Both hidden, content fills screen (with padding for rounded corners)
+   RIGHT PANEL
+   - Width is set via inline style (percentage-based from JS)
+   - 12px margin-left for spacing from middle content
    ========================================================================== */
 
-.is-focus-mode .left-sidebar {
-  width: 0 !important;
-  min-width: 0;
-  margin-right: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
+.main-layout .right-panel,
+.main-layout aside.right-panel,
+.v2-app .main-layout .right-panel {
+  position: relative !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+  /* Width is controlled by inline style */
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  margin: 0 0 0 12px !important;
+  border-radius: 20px !important;
+  background-color: var(--surface-primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  transform: none !important;
+  transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              margin 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-.is-focus-mode .right-panel {
+/* Right panel hidden */
+.main-layout.right-hidden .right-panel,
+.main-layout.right-hidden aside.right-panel {
   width: 0 !important;
-  min-width: 0;
-  margin-left: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* In focus mode, keep rounded corners */
-.is-focus-mode .main-content__inner {
-  border-radius: var(--radius-2xl);
+  min-width: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
 
 /* ==========================================================================
-   Responsive - Laptops (> 1024px)
+   FOCUS MODE - Both panels hidden, middle fills entire space
+   ========================================================================== */
+
+.main-layout.is-focus-mode {
+  padding: 12px !important;
+}
+
+.main-layout.is-focus-mode .left-sidebar,
+.main-layout.is-focus-mode aside.left-sidebar,
+.v2-app .main-layout.is-focus-mode .left-sidebar {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  flex-basis: 0 !important;
+}
+
+.main-layout.is-focus-mode .right-panel,
+.main-layout.is-focus-mode aside.right-panel,
+.v2-app .main-layout.is-focus-mode .right-panel {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  flex-basis: 0 !important;
+}
+
+/* Middle content in focus mode - fills entire remaining space */
+.main-layout.is-focus-mode .main-content,
+.main-layout.is-focus-mode main.main-content {
+  flex: 1 1 0% !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.main-layout.is-focus-mode .main-content__inner {
+  width: 100% !important;
+  max-width: none !important;
+  border-radius: 20px !important;
+}
+
+/* ==========================================================================
+   RESPONSIVE - Tablets and smaller
    ========================================================================== */
 
 @media (max-width: 1200px) {
   .main-layout {
-    --layout-padding: 10px;
+    padding: 10px !important;
+  }
+  
+  .main-layout .left-sidebar {
+    margin-right: 10px !important;
+  }
+  
+  .main-layout.left-hidden .left-sidebar {
+    margin-right: 0 !important;
+  }
+  
+  .main-layout .right-panel {
+    margin-left: 10px !important;
+  }
+  
+  .main-layout.right-hidden .right-panel,
+  .main-layout.is-focus-mode .right-panel {
+    margin-left: 0 !important;
   }
 }
-
-/* ==========================================================================
-   Responsive - Tablets (≤ 1024px) - Right panel becomes overlay
-   ========================================================================== */
 
 @media (max-width: 1024px) {
-  .main-layout .right-panel {
-    position: fixed;
-    right: var(--layout-padding);
-    top: var(--layout-padding);
-    bottom: var(--layout-padding);
-    height: auto;
-    z-index: var(--z-fixed);
-    /* Fixed width for tablet overlay */
-    width: 300px !important;
-    margin-left: 0;
+  .main-layout {
+    padding: 10px !important;
   }
-
-  .right-hidden .right-panel {
-    transform: translateX(calc(100% + var(--layout-padding)));
-    opacity: 0;
+  
+  /* Right panel becomes overlay on tablet */
+  .main-layout .right-panel {
+    position: fixed !important;
+    right: 10px !important;
+    top: 10px !important;
+    bottom: 10px !important;
+    height: auto !important;
     width: 300px !important;
+    margin-left: 0 !important;
+    z-index: 300;
+  }
+  
+  .main-layout.right-hidden .right-panel {
+    transform: translateX(calc(100% + 10px));
+    width: 300px !important;
+    opacity: 0;
   }
 }
-
-/* ==========================================================================
-   Responsive - Mobile (≤ 768px) - Both panels become overlays
-   ========================================================================== */
 
 @media (max-width: 768px) {
   .main-layout {
-    --layout-padding: 8px;
+    padding: 8px !important;
   }
-
+  
+  /* Left sidebar becomes overlay on mobile */
   .main-layout .left-sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    height: auto;
-    z-index: var(--z-fixed);
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    height: auto !important;
+    width: 240px !important;
+    margin-right: 0 !important;
     border-radius: 0;
-    width: var(--sidebar-width-expanded) !important;
-    margin-right: 0;
+    z-index: 300;
   }
-
-  .left-hidden .left-sidebar {
+  
+  .main-layout.left-hidden .left-sidebar {
     transform: translateX(-100%);
-    width: var(--sidebar-width-expanded) !important;
+    width: 240px !important;
     opacity: 0;
   }
-
+  
   .main-layout .right-panel {
-    right: 0;
-    top: 0;
-    bottom: 0;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
     border-radius: 0;
   }
-
-  .right-hidden .right-panel {
+  
+  .main-layout.right-hidden .right-panel {
     transform: translateX(100%);
   }
 }
 
 @media (max-width: 576px) {
   .main-layout {
-    --layout-padding: 6px;
+    padding: 6px !important;
   }
   
   .main-layout .right-panel {
@@ -264,14 +349,13 @@
   content: '';
   position: fixed;
   inset: 0;
-  background-color: var(--bg-overlay);
+  background-color: rgba(0, 0, 0, 0.4);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: 
-    opacity var(--transition-web3),
-    visibility var(--transition-web3);
-  z-index: calc(var(--z-fixed) - 1);
+  transition: opacity 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 299;
 }
 
 @media (max-width: 1024px) {
@@ -290,3 +374,4 @@
     pointer-events: auto;
   }
 }
+
