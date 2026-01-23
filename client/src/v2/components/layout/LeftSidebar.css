@@ -277,21 +277,10 @@
 
 /* ==========================================================================
    Responsive
+   NOTE: Layout positioning for tablet/mobile is handled in MainLayout.css
    ========================================================================== */
 
+/* On mobile, when sidebar is visible (as overlay), show labels in expanded state */
 @media (max-width: 768px) {
-  .left-sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    border-radius: 0;
-    box-shadow: var(--shadow-elevated);
-    width: var(--sidebar-width-expanded);
-  }
-
-  .left-sidebar .nav-item__label {
-    opacity: 1;
-    max-width: 180px;
-  }
+  /* Labels visibility is controlled by parent .left-expanded class in MainLayout.css */
 }

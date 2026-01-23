@@ -108,32 +108,12 @@
 
 /* ==========================================================================
    Responsive
+   NOTE: Layout positioning for tablet/mobile is handled in MainLayout.css
    ========================================================================== */
 
+/* Hide resize handle on tablet/mobile (overlay mode) */
 @media (max-width: 1024px) {
-  .right-panel {
-    position: fixed;
-    right: var(--layout-padding);
-    top: var(--layout-padding);
-    bottom: var(--layout-padding);
-    border-radius: var(--radius-2xl);
-    z-index: var(--z-fixed);
-    box-shadow: var(--shadow-2xl);
-  }
-}
-
-@media (max-width: 768px) {
-  .right-panel {
-    right: 0;
-    top: 0;
-    bottom: 0;
-    border-radius: 0;
-  }
-}
-
-@media (max-width: 576px) {
-  .right-panel {
-    width: 100%;
-    max-width: 320px;
+  .right-panel__resize-handle {
+    display: none;
   }
 }

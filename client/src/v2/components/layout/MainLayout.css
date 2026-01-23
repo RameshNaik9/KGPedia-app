@@ -1,275 +1,618 @@
 /* ==========================================================================
-   MainLayout Styles - Clean approach with NO gap, using margins
+   MainLayout.css - Primary layout styles
+   
+   Three-column layout: Left Sidebar | Main Content | Right Panel
+   
+   Layout Features:
+   - 12px padding from screen edges
+   - 12px spacing between panels
+   - Left sidebar: 72px (collapsed) / 240px (expanded)
+   - Right panel: 22% default (min 250px, max 35%)
+   - Middle content: fills remaining space
+   - Focus mode: both panels hidden, content fills screen
    ========================================================================== */
 
-.main-layout {
-  display: flex;
-  position: relative;
-  min-height: 100vh;
-  height: 100vh;
-  width: 100%;
+/* ==========================================================================
+   GLOBAL RESETS - Ensure body/html don't interfere
+   ========================================================================== */
+
+html, body, #root, .v2-app {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.v2-app {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+}
+
+/* ==========================================================================
+   BOX SIZING RESET
+   ========================================================================== */
+
+.main-layout,
+.main-layout *,
+.main-layout *::before,
+.main-layout *::after {
+  box-sizing: border-box !important;
+}
+
+/* ==========================================================================
+   MAIN LAYOUT CONTAINER
+   - Takes full viewport width and height
+   - 12px padding from screen edges
+   - Flexbox row layout
+   ========================================================================== */
+
+.main-layout,
+.v2-app .main-layout,
+div.main-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  position: relative !important;
+  /* Use 100% instead of 100vw to avoid scrollbar width issues */
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  padding: 12px !important;
+  gap: 0 !important;
+  overflow: hidden !important;
   background-color: var(--bg-primary);
-  overflow: hidden;
-  padding: var(--layout-padding);
-  /* NO gap - using margins for spacing */
-  gap: 0;
-  transition: background-color var(--transition-slow);
 }
 
 /* ==========================================================================
-   Main Content - Fills ALL remaining space
+   LEFT SIDEBAR
+   - Fixed width: 72px (collapsed) or 240px (expanded)
+   - 12px margin-right for spacing to middle content
    ========================================================================== */
 
-.main-content {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  height: 100%;
-  overflow: hidden;
+.main-layout .left-sidebar,
+.main-layout aside.left-sidebar,
+.v2-app .main-layout .left-sidebar {
+  position: relative !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+  width: 72px !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  margin: 0 12px 0 0 !important;
+  padding: 8px !important;
+  border-radius: 20px !important;
+  background-color: var(--surface-primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              margin 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-.main-content__inner {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: var(--surface-primary);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
-  border-radius: var(--radius-2xl);
-  transition: 
-    background-color var(--transition-slow),
-    box-shadow var(--transition-slow);
+/* Left sidebar expanded */
+.main-layout.left-expanded .left-sidebar,
+.main-layout.left-expanded aside.left-sidebar {
+  width: 240px !important;
+}
+
+/* Left sidebar hidden */
+.main-layout.left-hidden .left-sidebar,
+.main-layout.left-hidden aside.left-sidebar {
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
 
 /* ==========================================================================
-   Left Sidebar - Uses margin-right for spacing
+   MAIN CONTENT (MIDDLE)
+   - Fills ALL remaining space
+   - flex: 1 1 0% ensures it grows to fill
+   - No max-width constraints
    ========================================================================== */
 
-.main-layout .left-sidebar {
-  border-radius: var(--radius-2xl);
-  border: none;
-  box-shadow: var(--shadow-card);
-  background-color: var(--surface-primary);
-  flex-shrink: 0;
-  width: var(--sidebar-width);
-  height: 100%;
-  margin-right: var(--layout-padding);
-  overflow: hidden;
-  transition: 
-    width var(--transition-web3),
-    margin var(--transition-web3),
-    opacity var(--transition-web3),
-    transform var(--transition-web3),
-    background-color var(--transition-slow);
+.main-layout .main-content,
+.main-layout main.main-content,
+.v2-app .main-layout .main-content {
+  flex: 1 1 0% !important;
+  flex-grow: 1 !important;
+  flex-shrink: 1 !important;
+  flex-basis: 0% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  width: auto !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.left-expanded .left-sidebar {
-  width: var(--sidebar-width-expanded);
+.main-layout .main-content__inner,
+.v2-app .main-layout .main-content__inner {
+  flex: 1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: var(--surface-primary) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* ==========================================================================
-   Right Panel - Uses margin-left for spacing
+   RIGHT PANEL
+   - Width is set via inline style (percentage-based from JS)
+   - 12px margin-left for spacing from middle content
    ========================================================================== */
 
-.main-layout .right-panel {
-  width: var(--right-panel-width);
-  height: 100%;
-  border-radius: var(--radius-2xl);
-  background-color: var(--surface-primary);
-  box-shadow: var(--shadow-card);
-  flex-shrink: 0;
-  margin-left: var(--layout-padding);
-  overflow: hidden;
-  transition: 
-    width var(--transition-web3),
-    margin var(--transition-web3),
-    opacity var(--transition-web3),
-    transform var(--transition-web3),
-    background-color var(--transition-slow);
+.main-layout .right-panel,
+.main-layout aside.right-panel,
+.v2-app .main-layout .right-panel {
+  position: relative !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  flex-basis: auto !important;
+  /* Width is controlled by inline style */
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100% !important;
+  margin: 0 0 0 12px !important;
+  border-radius: 20px !important;
+  background-color: var(--surface-primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+  transform: none !important;
+  transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              margin 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Right panel hidden */
+.main-layout.right-hidden .right-panel,
+.main-layout.right-hidden aside.right-panel {
+  width: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
 }
 
 /* ==========================================================================
-   Left Hidden - Completely removed, no space taken
+   FOCUS MODE - Both panels hidden, middle fills entire space
    ========================================================================== */
 
-.left-hidden .left-sidebar {
-  width: 0;
-  margin-right: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
+.main-layout.is-focus-mode {
+  padding: 12px !important;
+}
+
+.main-layout.is-focus-mode .left-sidebar,
+.main-layout.is-focus-mode aside.left-sidebar,
+.v2-app .main-layout.is-focus-mode .left-sidebar {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  flex-basis: 0 !important;
+}
+
+.main-layout.is-focus-mode .right-panel,
+.main-layout.is-focus-mode aside.right-panel,
+.v2-app .main-layout.is-focus-mode .right-panel {
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  overflow: hidden !important;
+  flex-basis: 0 !important;
+}
+
+/* Middle content in focus mode - fills entire remaining space */
+.main-layout.is-focus-mode .main-content,
+.main-layout.is-focus-mode main.main-content {
+  flex: 1 1 0% !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.main-layout.is-focus-mode .main-content__inner {
+  width: 100% !important;
+  max-width: none !important;
+  border-radius: 20px !important;
 }
 
 /* ==========================================================================
-   Right Hidden - Completely removed, no space taken
+   RESPONSIVE BREAKPOINTS
+   - Desktop: > 1024px (default styles above)
+   - Tablet: 768px - 1024px
+   - Mobile: < 768px
    ========================================================================== */
 
-.right-hidden .right-panel {
-  width: 0;
-  margin-left: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* ==========================================================================
-   Right Hidden - Remove right padding so content extends to edge
-   ========================================================================== */
-
-.right-hidden {
-  padding-right: 0;
-}
-
-/* ==========================================================================
-   Left Hidden - Remove left padding so content extends to edge
-   ========================================================================== */
-
-.left-hidden {
-  padding-left: 0;
-}
-
-/* ==========================================================================
-   Focus Mode - Both hidden, no left/right padding
-   ========================================================================== */
-
-.is-focus-mode {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.is-focus-mode .left-sidebar {
-  width: 0;
-  margin-right: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.is-focus-mode .right-panel {
-  width: 0;
-  margin-left: 0;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* ==========================================================================
-   Responsive
-   ========================================================================== */
-
+/* --------------------------------------------------------------------------
+   Small Desktop / Large Tablet (1024px - 1200px)
+   - Slightly reduced padding
+   -------------------------------------------------------------------------- */
 @media (max-width: 1200px) {
   .main-layout {
-    --layout-padding: 10px;
-  }
-
-  .main-layout .right-panel {
-    width: 260px;
+    padding: 10px !important;
   }
   
-  .right-hidden .right-panel {
-    width: 0;
+  .main-layout .left-sidebar {
+    margin-right: 10px !important;
   }
-}
+  
+  .main-layout.left-hidden .left-sidebar {
+    margin-right: 0 !important;
+  }
 
-@media (max-width: 1024px) {
   .main-layout .right-panel {
-    position: fixed;
-    right: var(--layout-padding);
-    top: var(--layout-padding);
-    bottom: var(--layout-padding);
-    height: auto;
-    z-index: var(--z-fixed);
-    width: var(--right-panel-width);
-    margin-left: 0;
+    margin-left: 10px !important;
   }
-
-  .right-hidden .right-panel {
-    transform: translateX(calc(100% + var(--layout-padding)));
-    width: var(--right-panel-width);
-    opacity: 0;
+  
+  .main-layout.right-hidden .right-panel,
+  .main-layout.is-focus-mode .right-panel {
+    margin-left: 0 !important;
   }
 }
 
+/* --------------------------------------------------------------------------
+   TABLET (768px - 1024px)
+   - Left sidebar: Always visible (collapsed 72px)
+   - Right panel: Overlay ON TOP of middle (fixed, slides from right)
+   - Middle: Fills entire space (does NOT move when panel opens)
+   
+   HIGH SPECIFICITY to override component CSS
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .main-layout {
+    padding: 10px !important;
+  }
+  
+  /* Left sidebar stays visible and in flow on tablet */
+  .main-layout .left-sidebar,
+  .main-layout aside.left-sidebar,
+  .v2-app .main-layout .left-sidebar,
+  .v2-app .main-layout aside.left-sidebar {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    width: 72px !important;
+    height: 100% !important;
+    margin: 0 10px 0 0 !important;
+    transform: none !important;
+  }
+  
+  /* Middle content fills all remaining space - does NOT shrink for right panel */
+  .main-layout .main-content,
+  .main-layout main.main-content,
+  .v2-app .main-layout .main-content {
+    flex: 1 1 0% !important;
+    width: auto !important;
+  }
+  
+  /* RIGHT PANEL IS FIXED OVERLAY - completely out of flex flow */
+  .main-layout .right-panel,
+  .main-layout aside.right-panel,
+  .v2-app .main-layout .right-panel,
+  .v2-app .main-layout aside.right-panel {
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    height: 100vh !important;
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    flex-basis: auto !important;
+    border-radius: 20px 0 0 20px !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
+    z-index: 400 !important;
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+  
+  /* Right panel hidden - slide completely off screen */
+  .main-layout.right-hidden .right-panel,
+  .main-layout.right-hidden aside.right-panel,
+  .v2-app .main-layout.right-hidden .right-panel {
+    transform: translateX(100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Right panel visible */
+  .main-layout:not(.right-hidden) .right-panel,
+  .main-layout:not(.right-hidden) aside.right-panel {
+    visibility: visible !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE (< 768px)
+   - Left sidebar: Overlay ON TOP (two-stage: minimal 72px, full 280px)
+   - Right panel: Overlay ON TOP (slides from right, 75% width)
+   - Middle: Full width (does NOT move when panels open)
+   - Both panels hidden by default
+   
+   HIGH SPECIFICITY to override component CSS
+   -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
   .main-layout {
-    --layout-padding: 8px;
+    padding: 8px !important;
   }
-
-  .main-layout .left-sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    height: auto;
-    z-index: var(--z-fixed);
-    border-radius: 0;
-    width: var(--sidebar-width-expanded);
-    margin-right: 0;
+  
+  /* Middle content takes full width - NEVER moves */
+  .main-layout .main-content,
+  .main-layout main.main-content,
+  .v2-app .main-layout .main-content {
+    flex: 1 1 0% !important;
+    width: 100% !important;
   }
-
-  .left-hidden .left-sidebar {
-    transform: translateX(-100%);
-    width: var(--sidebar-width-expanded);
-    opacity: 0;
+  
+  .main-layout .main-content__inner,
+  .v2-app .main-layout .main-content__inner {
+    border-radius: 16px !important;
   }
-
-  .main-layout .right-panel {
-    right: 0;
-    top: 0;
-    bottom: 0;
-    border-radius: 0;
+  
+  /* LEFT SIDEBAR - FIXED overlay ON TOP, completely out of flex flow */
+  .main-layout .left-sidebar,
+  .main-layout aside.left-sidebar,
+  .v2-app .main-layout .left-sidebar,
+  .v2-app .main-layout aside.left-sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    right: auto !important;
+    height: 100vh !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 12px 8px !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    border-radius: 0 20px 20px 0 !important;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+    z-index: 400 !important;
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
-
-  .right-hidden .right-panel {
-    transform: translateX(100%);
+  
+  /* Left sidebar minimal state (icons only) - default when visible */
+  .main-layout:not(.left-expanded) .left-sidebar,
+  .main-layout:not(.left-expanded) aside.left-sidebar,
+  .v2-app .main-layout:not(.left-expanded) .left-sidebar {
+    width: 72px !important;
+    min-width: 72px !important;
+    max-width: 72px !important;
+  }
+  
+  /* Left sidebar expanded state (icons + text) */
+  .main-layout.left-expanded .left-sidebar,
+  .main-layout.left-expanded aside.left-sidebar,
+  .v2-app .main-layout.left-expanded .left-sidebar {
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 75vw !important;
+    padding: 16px 12px !important;
+  }
+  
+  /* Left sidebar hidden - slide completely off screen */
+  .main-layout.left-hidden .left-sidebar,
+  .main-layout.left-hidden aside.left-sidebar,
+  .v2-app .main-layout.left-hidden .left-sidebar {
+    transform: translateX(-100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Left sidebar visible */
+  .main-layout:not(.left-hidden) .left-sidebar,
+  .main-layout:not(.left-hidden) aside.left-sidebar {
+    visibility: visible !important;
+  }
+  
+  /* RIGHT PANEL - FIXED overlay ON TOP, 75% width */
+  .main-layout .right-panel,
+  .main-layout aside.right-panel,
+  .v2-app .main-layout .right-panel,
+  .v2-app .main-layout aside.right-panel {
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    height: 100vh !important;
+    width: 75% !important;
+    min-width: 280px !important;
+    max-width: 360px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    border-radius: 20px 0 0 20px !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
+    z-index: 400 !important;
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 350ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+  
+  /* Right panel hidden - slide completely off screen */
+  .main-layout.right-hidden .right-panel,
+  .main-layout.right-hidden aside.right-panel,
+  .v2-app .main-layout.right-hidden .right-panel {
+    transform: translateX(100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* Right panel visible */
+  .main-layout:not(.right-hidden) .right-panel,
+  .main-layout:not(.right-hidden) aside.right-panel {
+    visibility: visible !important;
   }
 }
 
-@media (max-width: 576px) {
+/* --------------------------------------------------------------------------
+   SMALL MOBILE (< 480px)
+   - Adjusted sizes for very small screens
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
   .main-layout {
-    --layout-padding: 6px;
+    padding: 6px !important;
   }
   
+  /* Left sidebar minimal */
+  .main-layout:not(.left-expanded) .left-sidebar {
+    width: 68px !important;
+  }
+  
+  /* Left sidebar expanded */
+  .main-layout.left-expanded .left-sidebar {
+    width: 260px !important;
+    max-width: 80% !important;
+  }
+  
+  /* Right panel takes more space on small screens */
   .main-layout .right-panel {
-    width: 100%;
-    max-width: 320px;
+    width: 85% !important;
+    max-width: none !important;
+  }
+  
+  .main-layout .main-content__inner {
+    border-radius: 12px !important;
+  }
+  
+  /* Smaller toggle buttons on small screens */
+  .mobile-toggle-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .mobile-toggle-btn svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
 /* ==========================================================================
-   Overlay for mobile/tablet
+   BACKDROP OVERLAY - Shows when panels are open on mobile/tablet
    ========================================================================== */
 
-.main-layout::before {
-  content: '';
+.main-layout .layout-backdrop {
   position: fixed;
   inset: 0;
-  background-color: var(--bg-overlay);
-  opacity: 0;
+  background-color: rgba(0, 0, 0, 0);
   visibility: hidden;
   pointer-events: none;
-  transition: 
-    opacity var(--transition-web3),
-    visibility var(--transition-web3);
-  z-index: calc(var(--z-fixed) - 1);
+  transition: background-color 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 350;
 }
 
+/* Backdrop visible on tablet when right panel is open */
 @media (max-width: 1024px) {
-  .main-layout:not(.right-hidden)::before {
-    opacity: 1;
+  .main-layout:not(.right-hidden) .layout-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
     visibility: visible;
     pointer-events: auto;
   }
 }
 
+/* Backdrop visible on mobile when any panel is open */
 @media (max-width: 768px) {
-  .main-layout:not(.left-hidden)::before,
-  .main-layout:not(.right-hidden)::before {
-    opacity: 1;
+  .main-layout:not(.left-hidden) .layout-backdrop,
+  .main-layout:not(.right-hidden) .layout-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
     visibility: visible;
     pointer-events: auto;
   }
 }
+
+/* ==========================================================================
+   NOTE: Toggle buttons removed - using LayoutControls instead
+   ========================================================================== */
+
+/* ==========================================================================
+   SWIPE HINT INDICATOR - Visual cue for swipe gesture areas
+   ========================================================================== */
+
+.swipe-hint {
+  display: none;
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60px;
+  background: linear-gradient(to bottom, 
+    transparent, 
+    var(--text-tertiary) 50%, 
+    transparent);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.swipe-hint--left {
+  left: 2px;
+}
+
+.swipe-hint--right {
+  right: 2px;
+}
+
+/* Show hints only on mobile when panels are hidden */
+@media (max-width: 768px) {
+  .swipe-hint {
+    display: block;
+  }
+  
+  .main-layout.left-hidden .swipe-hint--left,
+  .main-layout.right-hidden .swipe-hint--right {
+    opacity: 0.4;
+  }
+}
+
+

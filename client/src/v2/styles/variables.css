@@ -134,10 +134,14 @@
   /* ========== Layout ========== */
   --sidebar-width: 72px;
   --sidebar-width-expanded: 240px;
-  --right-panel-width: 280px;
   --header-height: 56px;
   --input-height: 48px;
   --layout-padding: 12px;
+  
+  /* Right Panel - Percentage based for responsive behavior */
+  --right-panel-width-default: 22%;
+  --right-panel-width-min: 250px;
+  --right-panel-width-max: 35%;
   
   /* ========== Vanta.js Background Colors ========== */
   /* These colors are used for the animated background on auth pages */

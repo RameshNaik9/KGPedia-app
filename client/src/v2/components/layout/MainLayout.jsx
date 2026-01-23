@@ -1,77 +1,121 @@
 /**
- * MainLayout - Primary layout wrapper
+ * MainLayout - Primary layout wrapper for all pages
+ * 
+ * This component stays mounted across route changes, preventing
+ * sidebar flickering and maintaining smooth transitions.
  * 
  * Modes:
  * - Standard View: Both sidebars visible
  * - Expand Left: Right hidden, content expands right
  * - Expand Right: Left hidden, content expands left
  * - Focus Mode: Both hidden, full content
+ * 
+ * Responsive:
+ * - Desktop (>1024px): All panels visible
+ * - Tablet (768-1024px): Left visible, right as swipeable overlay
+ * - Mobile (<768px): Both panels as swipeable overlays
+ * 
+ * Uses React Router's Outlet to render child routes.
  */
 
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import LeftSidebar from './LeftSidebar';
 import RightPanel from './RightPanel';
-import { useLayout, LAYOUT_MODES } from '../../context/LayoutContext';
+import { useLayout } from '../../context/LayoutContext';
+import { useSwipeGesture } from '../../hooks/useSwipeGesture';
 import './MainLayout.css';
 
-const MainLayout = ({ 
-  children,
-  showRightPanel = true,
-  conversations = [],
-  collections = [],
-  activeConversationId,
-  onConversationSelect,
-  onCollectionSelect,
-  onNewChat
-}) => {
+// Map URL paths to assistant types
+const getAssistantTypeFromPath = (pathname) => {
+  if (pathname.includes('/career-assistant')) return 'Career';
+  if (pathname.includes('/academics-assistant')) return 'Academics';
+  if (pathname.includes('/gymkhana-assistant')) return 'Gymkhana';
+  if (pathname.includes('/bhaat-assistant')) return 'Bhaat';
+  return null; // Home or other pages show all
+};
+
+const MainLayout = () => {
+  const location = useLocation();
   const { 
     layoutMode, 
     isLeftSidebarVisible, 
     isRightPanelVisible,
     isLeftSidebarExpanded,
-    isFocusMode
+    isFocusMode,
+    // Device type (used for swipe gestures and classes)
+    isMobile,
+    isTablet,
+    // Mobile/Tablet actions
+    closeAllPanels,
+    openLeftSidebar,
+    openRightPanel,
+    closeLeftSidebar,
+    closeRightPanel,
   } = useLayout();
 
+  // Determine current assistant type from URL
+  const currentAssistantType = useMemo(() => {
+    return getAssistantTypeFromPath(location.pathname);
+  }, [location.pathname]);
+
   // Generate layout class names
-  const getLayoutClasses = () => {
+  const layoutClasses = useMemo(() => {
     const classes = ['main-layout'];
-    
-    // Layout mode
     classes.push(`layout-mode--${layoutMode}`);
-    
-    // State classes
     if (!isLeftSidebarVisible) classes.push('left-hidden');
     if (!isRightPanelVisible) classes.push('right-hidden');
     if (isLeftSidebarExpanded) classes.push('left-expanded');
     if (isFocusMode) classes.push('is-focus-mode');
-    
+    if (isMobile) classes.push('is-mobile');
+    if (isTablet) classes.push('is-tablet');
     return classes.join(' ');
-  };
+  }, [layoutMode, isLeftSidebarVisible, isRightPanelVisible, isLeftSidebarExpanded, isFocusMode, isMobile, isTablet]);
+
+  // Handle backdrop click (close panels on mobile/tablet)
+  const handleBackdropClick = useCallback(() => {
+    closeAllPanels();
+  }, [closeAllPanels]);
+
+  // Setup swipe gestures for mobile/tablet
+  useSwipeGesture({
+    onSwipeRightFromLeft: openLeftSidebar,
+    onSwipeLeftFromRight: openRightPanel,
+    onSwipeLeft: closeLeftSidebar,
+    onSwipeRight: closeRightPanel,
+    isLeftOpen: isLeftSidebarVisible,
+    isRightOpen: isRightPanelVisible,
+    enabled: isMobile || isTablet,
+  });
 
   return (
-    <div className={getLayoutClasses()}>
-      {/* Left Sidebar - Always in DOM for smooth animations */}
-      <LeftSidebar onNewChat={onNewChat} />
+    <div className={layoutClasses}>
+      {/* Backdrop overlay for mobile/tablet - click to close panels */}
+      <div 
+        className="layout-backdrop" 
+        onClick={handleBackdropClick}
+        aria-hidden="true"
+      />
 
-      {/* Main Content Area */}
+      {/* Swipe hint indicators for mobile */}
+      <div className="swipe-hint swipe-hint--left" aria-hidden="true" />
+      <div className="swipe-hint swipe-hint--right" aria-hidden="true" />
+
+      {/* Left Sidebar - Static, never re-mounts */}
+      <LeftSidebar />
+
+      {/* Main Content Area - Only this part changes on navigation */}
       <main className="main-content">
         <div className="main-content__inner">
-          {children}
+          <Outlet />
         </div>
       </main>
 
-      {/* Right Panel - Always in DOM for smooth animations */}
-      {showRightPanel && (
-        <RightPanel
-          conversations={conversations}
-          collections={collections}
-          activeConversationId={activeConversationId}
-          onConversationSelect={onConversationSelect}
-          onCollectionSelect={onCollectionSelect}
-        />
-      )}
+      {/* Right Panel - Static, filters conversations by assistant type */}
+      <RightPanel currentAssistantType={currentAssistantType} />
     </div>
   );
 };
 
 export default MainLayout;
+
